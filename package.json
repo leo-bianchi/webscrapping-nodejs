@@ -1,0 +1,31 @@
+{
+  "name": "webscrapping-nodejs",
+  "version": "1.0.0",
+  "description": "Web Scrapping.",
+  "main": "src/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "puppeteer": "^1.17.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "nodejs src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leo-bianchi/web-scrapping.git"
+  },
+  "keywords": [
+    "nodejs",
+    "webscrapping",
+    "puppeteer"
+  ],
+  "author": "Leo Bianchi <leo.c.bianchi@hotmail.com> (github.com/leo-bianchi)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leo-bianchi/web-scrapping/issues"
+  },
+  "homepage": "https://github.com/leo-bianchi/web-scrapping#readme"
+}
