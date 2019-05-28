@@ -71,4 +71,3 @@ void(async () => {
     browser.close();
   }
 })();
-
