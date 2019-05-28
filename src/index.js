@@ -5,11 +5,11 @@ const puppeteer = require('puppeteer');
 const url = 'https://www2.fiap.com.br';
 
 void(async () => {
-  try {
-    const browser = await puppeteer.launch({
-      headless: true
-    });
+  const browser = await puppeteer.launch({
+    headless: true
+  });
 
+  try {
     const page = await browser.newPage();
 
     await page.goto(url);
@@ -19,7 +19,12 @@ void(async () => {
     page.$eval('#usuario', el => el.value = 'username');
     page.$eval('#senha', el => el.value = 'password');
 
-    page.click('input[type="submit"]');
+    await page.click('input[type="submit"]');
+
+    if (await page.url() != url + '/Aluno/Home') {
+      browser.close();
+      throw 'Invalid credentials';
+    }
 
     await page.waitForSelector('.l-header-title');
 
@@ -27,7 +32,9 @@ void(async () => {
 
     await page.select('select.i-boletim-info-select', '2SIR-2018');
 
-    await page.waitFor(1500);
+    await page.waitForResponse(response => {
+      return response.request().resourceType() === 'xhr';
+    });
 
     const result = await page.evaluate(() => {
       // a helper function for some slight code reuse
@@ -44,23 +51,27 @@ void(async () => {
       const disciplinaRows = document.querySelectorAll(DISCIPLINA_ROW_SELECTOR);
 
       for (const [i, tr] of disciplinaRows.entries()) {
-        if (data[i] == undefined) {
-          data[i] = {};
-        }
+        data[i] = data[i] ? data[i] : {};
         data[i].disciplina = grabFromRow(tr, 'td.td-disciplina');
-        if (data[i].nac == undefined) {
-          data[i].nac = {};
-        }
+
+        data[i].nac = data[i].nac ? data[i].nac : {};
         data[i].nac.valor = grabFromRow(tr, 'td:nth-child(2)');
+
+        data[i].am = data[i].am ? data[i].am : {};
+        data[i].am.valor = grabFromRow(tr, 'td:nth-child(3)');
+
+        data[i].ps = data[i].ps ? data[i].ps : {};
+        data[i].ps.valor = grabFromRow(tr, 'td:nth-child(4)');
+
+        data[i].faltas = data[i].faltas ? data[i].ps : {};
+        data[i].faltas.contagem = grabFromRow(tr, 'td:nth-child(5)');
+        data[i].faltas.porcentagem = grabFromRow(tr, 'td:nth-child(13)');
+
+        data[i].media = data[i].media ? data[i].ps : {};
+        data[i].media.valor = grabFromRow(tr, 'td:nth-child(6)');
       }
       return data;
     });
-
-    //   grade = await page.evaluate(() => {
-    // 	return document.querySelector('tr.i-boletim-table-row').innerText;
-    // });
-
-    //console.log(grade);
 
     console.log(result);
 
@@ -68,6 +79,8 @@ void(async () => {
 
   } catch (error) {
     console.log(error);
-    browser.close();
+    if (typeof browser !== 'undefined') {
+      browser.close();
+    }
   }
 })();
