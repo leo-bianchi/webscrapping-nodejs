@@ -17,7 +17,7 @@ $ git clone https://github.com/leo-bianchi/webscrapping-nodejs.git
 
 Installing puppeteer
 ```bash
-$ npm install puppeteer
+$ npm ci puppeteer
 ```
 
 ### Running project
@@ -34,7 +34,7 @@ Run the test
 $ npm test
 ```
 
-Run the code
+Runs the code
 ```bash
 $ nodejs src/index.js
 ```
@@ -51,4 +51,4 @@ $ nodejs src/index.js
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
