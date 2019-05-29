@@ -63,11 +63,11 @@ void(async () => {
         data[i].ps = data[i].ps ? data[i].ps : {};
         data[i].ps.valor = grabFromRow(tr, 'td:nth-child(4)');
 
-        data[i].faltas = data[i].faltas ? data[i].ps : {};
+        data[i].faltas = data[i].faltas ? data[i].faltas : {};
         data[i].faltas.contagem = grabFromRow(tr, 'td:nth-child(5)');
         data[i].faltas.porcentagem = grabFromRow(tr, 'td:nth-child(13)');
 
-        data[i].media = data[i].media ? data[i].ps : {};
+        data[i].media = data[i].media ? data[i].media : {};
         data[i].media.valor = grabFromRow(tr, 'td:nth-child(6)');
       }
       return data;
