@@ -7,7 +7,9 @@
     "lib": "lib"
   },
   "dependencies": {
-    "puppeteer": "^1.17.0"
+    "object.fromentries": "^2.0.0",
+    "puppeteer": "^1.20.0",
+    "puppeteer-select": "^1.0.3"
   },
   "devDependencies": {},
   "scripts": {

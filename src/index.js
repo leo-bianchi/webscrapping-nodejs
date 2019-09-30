@@ -1,12 +1,15 @@
 /*jshint esversion: 8 */
 
 const puppeteer = require('puppeteer');
+const select = require('puppeteer-select');
+var fromEntries = require('object.fromentries');
 
-const url = 'https://www2.fiap.com.br';
+const url = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/';
+const sivec = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/sivec/pagina3-pesquisa-rg.html';
 
 void(async () => {
   const browser = await puppeteer.launch({
-    headless: true
+    headless: false
   });
 
   try {
@@ -16,64 +19,57 @@ void(async () => {
 
     page.waitFor('body');
 
-    page.$eval('#usuario', el => el.value = 'username');
-    page.$eval('#senha', el => el.value = 'password');
+    page.$eval('#username', el => el.value = 'fiap');
+    page.$eval('#password', el => el.value = 'mpsp');
+    //page.$eval('#idNomePesq', el => el.value = 'teste');
 
-    await page.click('input[type="submit"]');
+    await page.click('button');
 
-    if (await page.url() != url + '/Aluno/Home') {
-      browser.close();
-      throw 'Invalid credentials';
+    await page.goto(sivec);
+
+    await page.waitFor('body');
+    // isto tem que ser alterado para o input do usuário no form.
+    await page.$eval('#idValorPesq', el => el.value = '1.157.644');
+
+    await page.click('#procurar');
+
+    await page.waitFor('body');
+
+    // trocar por input do usuário
+    const a = await select(page).getElement('a:contains(1.157.644)');
+
+    if (a) {
+      await a.click();
+    } else {
+      throw new Error("Link not found");
     }
 
-    await page.waitForSelector('.l-header-title');
+    await page.waitForSelector('table');
 
-    await page.goto(url + '/Aluno/Boletim');
+    const data1 = await page.$$eval('table tr td span',
+      spans => spans.map((span) => {
+        return span.innerText.trim();
+      }));
 
-    await page.select('select.i-boletim-info-select', '2SIR-2018');
+    Array.prototype.toObject = await
 
-    await page.waitForResponse(response => {
-      return response.request().resourceType() === 'xhr';
-    });
-
-    const result = await page.evaluate(() => {
-      // a helper function for some slight code reuse
-      // grab the TD, the text and remove trailing whitespace
-      const grabFromRow = (row, selector) => row
-        .querySelector(`${selector}`)
-        .innerText
-        .trim();
-
-      const DISCIPLINA_ROW_SELECTOR = 'tr.i-boletim-table-row';
-
-      var data = [];
-
-      const disciplinaRows = document.querySelectorAll(DISCIPLINA_ROW_SELECTOR);
-
-      for (const [i, tr] of disciplinaRows.entries()) {
-        data[i] = data[i] ? data[i] : {};
-        data[i].disciplina = grabFromRow(tr, 'td.td-disciplina');
-
-        data[i].nac = data[i].nac ? data[i].nac : {};
-        data[i].nac.valor = grabFromRow(tr, 'td:nth-child(2)');
-
-        data[i].am = data[i].am ? data[i].am : {};
-        data[i].am.valor = grabFromRow(tr, 'td:nth-child(3)');
-
-        data[i].ps = data[i].ps ? data[i].ps : {};
-        data[i].ps.valor = grabFromRow(tr, 'td:nth-child(4)');
-
-        data[i].faltas = data[i].faltas ? data[i].ps : {};
-        data[i].faltas.contagem = grabFromRow(tr, 'td:nth-child(5)');
-        data[i].faltas.porcentagem = grabFromRow(tr, 'td:nth-child(13)');
-
-        data[i].media = data[i].media ? data[i].ps : {};
-        data[i].media.valor = grabFromRow(tr, 'td:nth-child(6)');
+    function() {
+      let r = {};
+      for (let i = 0; i < this.length; i += 2) {
+        let key = removerAcentos(this[i]),
+          value = this[i + 1];
+        r[key] = value;
       }
-      return data;
-    });
+      return r;
+    };
 
-    console.log(result);
+    var obj = await data1.toObject();
+
+    obj = fromEntries(
+      Object.entries(obj).map(([k, v]) => [k.toLowerCase(), v])
+    );
+
+    console.log(obj);
 
     await browser.close();
 
@@ -84,3 +80,31 @@ void(async () => {
     }
   }
 })();
+
+function removerAcentos(newStringComAcento) {
+  var string = newStringComAcento;
+  var mapaAcentosHex = {
+    a: /[\xE0-\xE6]/g,
+    A: /[\xC0-\xC6]/g,
+    e: /[\xE8-\xEB]/g,
+    E: /[\xC8-\xCB]/g,
+    i: /[\xEC-\xEF]/g,
+    I: /[\xCC-\xCF]/g,
+    o: /[\xF2-\xF6]/g,
+    O: /[\xD2-\xD6]/g,
+    u: /[\xF9-\xFC]/g,
+    U: /[\xD9-\xDC]/g,
+    c: /\xE7/g,
+    C: /\xC7/g,
+    n: /\xF1/g,
+    N: /\xD1/g,
+    '-': /\s/g
+  };
+
+  for (var letra in mapaAcentosHex) {
+    var expressaoRegular = mapaAcentosHex[letra];
+    string = string.replace(expressaoRegular, letra);
+  }
+
+  return string;
+}
