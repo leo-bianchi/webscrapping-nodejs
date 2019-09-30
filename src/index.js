@@ -63,11 +63,23 @@ void(async () => {
       return r;
     };
 
+<<<<<<< HEAD
     var obj = await data1.toObject();
 
     obj = fromEntries(
       Object.entries(obj).map(([k, v]) => [k.toLowerCase(), v])
     );
+=======
+        data[i].faltas = data[i].faltas ? data[i].faltas : {};
+        data[i].faltas.contagem = grabFromRow(tr, 'td:nth-child(5)');
+        data[i].faltas.porcentagem = grabFromRow(tr, 'td:nth-child(13)');
+
+        data[i].media = data[i].media ? data[i].media : {};
+        data[i].media.valor = grabFromRow(tr, 'td:nth-child(6)');
+      }
+      return data;
+    });
+>>>>>>> 1e759e969b0e0670376af6bd012ba7c7ccdb4dea
 
     console.log(obj);
 
