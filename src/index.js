@@ -9,7 +9,10 @@ const sivec = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/sivec/pa
 
 async function portalSivec() {
   const browser = await puppeteer.launch({
-    headless: false
+    args: ['--no-sandbox'],
+    executablePath: "/usr/bin/google-chrome",
+    headless: true
+
   });
 
   try {
@@ -18,17 +21,19 @@ async function portalSivec() {
     await page.goto(url);
 
     await Promise.all([
-       page.waitForNavigation({
-         waitUntil: 'load'
-       }),
-       page.$eval('#username', el => el.value = 'fiap'),
-       page.$eval('#password', el => el.value = 'mpsp'),
-       page.click('button')
-     ]);
+      page.waitForNavigation({
+        waitUntil: 'load'
+      }),
+      page.$eval('#username', el => el.value = 'fiap'),
+      page.$eval('#password', el => el.value = 'mpsp'),
+      page.click('button')
+    ]);
 
     await page.goto(sivec);
 
-    await page.waitFor('body');
+    await page.waitForNavigation({
+      waitUntil: 'load',
+    });
     // isto tem que ser alterado para o input do usuário no form.
     await page.$eval('#idValorPesq', el => el.value = '1.157.644');
 
@@ -48,12 +53,12 @@ async function portalSivec() {
     }
 
     await page.waitForNavigation({
-        waitUntil: 'load',
-      });
+      waitUntil: 'load',
+    });
 
     const data1 = await page.$$eval('table tr td span',
       spans => spans.map((span) => {
-        return span.innerText.trim().replace(':', '').replace('º','');
+        return span.innerText.trim().replace(':', '').replace('º', '');
       }));
 
     Array.prototype.toObject = await
