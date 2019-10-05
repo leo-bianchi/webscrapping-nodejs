@@ -76,6 +76,8 @@ async function portalSivec() {
 
     await browser.close();
 
+    return obj;
+
   } catch (error) {
     console.log(error);
     if (typeof browser !== 'undefined') {
