@@ -53,7 +53,7 @@ async function portalSivec() {
 
     const data1 = await page.$$eval('table tr td span',
       spans => spans.map((span) => {
-        return span.innerText.trim();
+        return span.innerText.trim().replace(':', '').replace('º','');
       }));
 
     Array.prototype.toObject = await
