@@ -35,11 +35,11 @@ If you are on linux, on browser type:
 localhost:3000/url
 ```
 
-Mac and linux:
+Mac or linux:
 On browser type:
 ```
-192.168.99.100:3000
-``´
+192.168.99.100:3000/url
+```
 
 ## Authors
 
