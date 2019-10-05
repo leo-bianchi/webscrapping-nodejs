@@ -13,24 +13,34 @@ Clone the project
 $ git clone https://github.com/leo-bianchi/webscrapping-nodejs.git
 ```
 
-### Install nodejs dependencies
-
-Installing dependencies
 ```bash
-$ cd webscrapping-nodejs && npm install
+$ cd webscrapping-nodejs
+```
+### Building and running container
+
+Build Container
+```bash
+$ docker build -t ubuntu/node-scrapping .
 ```
 
-### Running project
-
+Run Container
 ```bash
-$ npm test
+$ docker run -it --rm --network host ubuntu/node-scrapping
 ```
+
 ### API's runs at port 3000
 
+If you are on linux:
 On browser type:
 ```
 localhost:3000/url
 ```
+
+Mac and linux:
+On browser type:
+```
+192.168.99.100:3000
+``´
 
 ## Authors
 
