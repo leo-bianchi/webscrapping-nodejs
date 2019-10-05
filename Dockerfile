@@ -1,4 +1,4 @@
-FROM node:10-slim
+FROM node:12-slim
 
 # -------- install chrome ----------
 # See https://crbug.com/795759
@@ -28,8 +28,6 @@ RUN yarn install
 
 # Copy script files
 COPY . .
-
-EXPOSE 3000
 
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["npm", "test"]
