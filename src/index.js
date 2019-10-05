@@ -7,7 +7,7 @@ var fromEntries = require('object.fromentries');
 const url = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/';
 const sivec = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/sivec/pagina3-pesquisa-rg.html';
 
-void(async () => {
+async function portalSivec() {
   const browser = await puppeteer.launch({
     headless: false
   });
@@ -17,13 +17,14 @@ void(async () => {
 
     await page.goto(url);
 
-    page.waitFor('body');
-
-    page.$eval('#username', el => el.value = 'fiap');
-    page.$eval('#password', el => el.value = 'mpsp');
-    //page.$eval('#idNomePesq', el => el.value = 'teste');
-
-    await page.click('button');
+    await Promise.all([
+       page.waitForNavigation({
+         waitUntil: 'load'
+       }),
+       page.$eval('#username', el => el.value = 'fiap'),
+       page.$eval('#password', el => el.value = 'mpsp'),
+       page.click('button')
+     ]);
 
     await page.goto(sivec);
 
@@ -33,7 +34,9 @@ void(async () => {
 
     await page.click('#procurar');
 
-    await page.waitFor('body');
+    await page.waitForNavigation({
+      waitUntil: 'load',
+    });
 
     // trocar por input do usuário
     const a = await select(page).getElement('a:contains(1.157.644)');
@@ -44,7 +47,9 @@ void(async () => {
       throw new Error("Link not found");
     }
 
-    await page.waitForSelector('table');
+    await page.waitForNavigation({
+        waitUntil: 'load',
+      });
 
     const data1 = await page.$$eval('table tr td span',
       spans => spans.map((span) => {
@@ -60,7 +65,6 @@ void(async () => {
           value = this[i + 1];
         r[key] = value;
       }
-      r = JSON.parse(JSON.stringify(r));
       return r;
     };
 
@@ -78,7 +82,9 @@ void(async () => {
       browser.close();
     }
   }
-})();
+}
+
+module.exports = portalSivec;
 
 function removerAcentos(newStringComAcento) {
   var string = newStringComAcento;
