@@ -13,7 +13,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "nodejs src/index.js"
+    "test": "node src/api.js"
   },
   "repository": {
     "type": "git",

@@ -15,28 +15,21 @@ $ git clone https://github.com/leo-bianchi/webscrapping-nodejs.git
 
 ### Install nodejs dependencies
 
-Installing puppeteer
+Installing dependencies
 ```bash
-$ npm ci puppeteer
+$ cd webscrapping-nodejs && npm install
 ```
 
 ### Running project
 
-Open the index.js file and change the credentials
-
-```javascript
-19 page.$eval('#usuario', el => el.value = 'username');
-20 page.$eval('#senha', el => el.value = 'password');
-```
-
-Run the test
 ```bash
 $ npm test
 ```
+### API's runs at port 3000
 
-Runs the code
-```bash
-$ nodejs src/index.js
+On browser type:
+```
+localhost:3000/url
 ```
 
 ## Authors
