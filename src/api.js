@@ -11,9 +11,8 @@ app.listen(3000, () => {
 
 app.get("/url", (req, res, next) => {
     getResult().then((obj) =>{
-        console.log("API ->",obj);
-        res.json(obj)
-    })
+        res.json(obj);
+    });
 });
 
 async function getResult() {

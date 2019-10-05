@@ -17,31 +17,25 @@ $ git clone https://github.com/leo-bianchi/webscrapping-nodejs.git
 
 Installing puppeteer
 ```bash
-$ npm ci puppeteer
+$ cd webscrapping-nodejs && npm install
 ```
 
 ### Running project
 
-Open the index.js file and change the credentials
-
-```javascript
-19 page.$eval('#usuario', el => el.value = 'username');
-20 page.$eval('#senha', el => el.value = 'password');
-```
-
-Run the test
+Run api
 ```bash
 $ npm test
 ```
 
-Runs the code
-```bash
-$ nodejs src/index.js
+### Access API: Open the browser, then type:
+```
+localhost:3000/url
 ```
 
 ## Authors
 
 *   **Leonardo Bianchi** - *Initial work* - [leo-bianchi](https://github.com/leo-bianchi)
+    **Lucas Hampel** - *Coworking* - [lucashampel](https://github.com/lucashampel)
 
 ## Built With
 

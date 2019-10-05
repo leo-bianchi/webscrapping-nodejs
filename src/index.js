@@ -17,23 +17,26 @@ async function portalSivec() {
 
     await page.goto(url);
 
-    await page.waitFor('body');
+    await Promise.all([
+      page.waitForNavigation({
+        waitUntil: 'load'
+      }),
+      page.$eval('#username', el => el.value = 'fiap'),
+      page.$eval('#password', el => el.value = 'mpsp'),
+      page.click('button')
+    ]);
 
-    await page.$eval('#username', el => el.value = 'fiap');
-    await page.$eval('#password', el => el.value = 'mpsp');
-    //page.$eval('#idNomePesq', el => el.value = 'teste');
-
-    await page.click('button');
 
     await page.goto(sivec);
 
-    await page.waitFor('body');
     // isto tem que ser alterado para o input do usuário no form.
     await page.$eval('#idValorPesq', el => el.value = '1.157.644');
 
     await page.click('#procurar');
 
-    await page.waitFor('body');
+    await page.waitForNavigation({
+     waitUntil: 'load',
+   });
 
     // trocar por input do usuário
     const a = await select(page).getElement('a:contains(1.157.644)');
@@ -44,13 +47,13 @@ async function portalSivec() {
       throw new Error("Link not found");
     }
 
-   // await page.waitForSelector('table');
-   await page.waitForNavigation({
-    waitUntil: 'networkidle0',
-  });
+    await page.waitForNavigation({
+      waitUntil: 'networkidle0',
+    });
+
     const data1 = await page.$$eval('table tr td span',
       spans => spans.map((span) => {
-        return span.innerText.trim();
+        return span.innerText.trim().replace(':', '').replace('º', '');
       }));
 
     Array.prototype.toObject = await
@@ -62,20 +65,17 @@ async function portalSivec() {
           value = this[i + 1];
         r[key] = value;
       }
-      console.log("R", r);
+
       return r;
     };
 
     var obj = await data1.toObject();
-    console.log("depois do to object", obj)
 
     obj = await fromEntries(
       Object.entries(obj).map(([k, v]) => [k.toLowerCase(), v])
     );
 
     await browser.close();
-
-    console.log("CÓDIGO ->",obj);
 
     return obj;
 
@@ -85,7 +85,7 @@ async function portalSivec() {
       browser.close();
     }
   }
-};
+}
 
 module.exports = portalSivec;
 
@@ -106,7 +106,7 @@ function removerAcentos(newStringComAcento) {
     C: /\xC7/g,
     n: /\xF1/g,
     N: /\xD1/g,
-    '-': /\s/g
+    '-': /\s/g,
   };
 
   for (var letra in mapaAcentosHex) {

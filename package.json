@@ -1,33 +1,28 @@
 {
   "name": "webscrapping-nodejs",
   "version": "1.0.0",
-  "description": "Web Scrapping.",
-  "main": "src/index.js",
+  "description": "An web scrapping tool developed using NodeJs 12.11.1 and Puppeteer lib.",
+  "main": "index.js",
   "directories": {
     "lib": "lib"
   },
-  "dependencies": {
-    "object.fromentries": "^2.0.0",
-    "puppeteer": "^1.20.0",
-    "puppeteer-select": "^1.0.3"
-  },
-  "devDependencies": {},
   "scripts": {
-    "test": "nodejs src/index.js"
+    "test": "node ./src/api.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leo-bianchi/web-scrapping.git"
+    "url": "git+https://github.com/leo-bianchi/webscrapping-nodejs.git"
   },
-  "keywords": [
-    "nodejs",
-    "webscrapping",
-    "puppeteer"
-  ],
   "author": "Leo Bianchi <leo.c.bianchi@hotmail.com> (github.com/leo-bianchi)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/leo-bianchi/web-scrapping/issues"
+    "url": "https://github.com/leo-bianchi/webscrapping-nodejs/issues"
   },
-  "homepage": "https://github.com/leo-bianchi/web-scrapping#readme"
+  "homepage": "https://github.com/leo-bianchi/webscrapping-nodejs#readme",
+  "dependencies": {
+    "object.fromentries": "^2.0.1",
+    "puppeteer": "^1.20.0",
+    "puppeteer-select": "^1.0.3"
+  },
+  "devDependencies": {}
 }
