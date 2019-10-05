@@ -35,7 +35,7 @@ If you are on linux, on browser type:
 localhost:3000/url
 ```
 
-Mac or linux:
+Mac or windows:
 On browser type:
 ```
 192.168.99.100:3000/url
