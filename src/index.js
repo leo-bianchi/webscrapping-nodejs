@@ -17,14 +17,13 @@ async function portalSivec() {
 
     await page.goto(url);
 
-    await Promise.all([
-       page.waitForNavigation({
-         waitUntil: 'load'
-       }),
-       page.$eval('#username', el => el.value = 'fiap'),
-       page.$eval('#password', el => el.value = 'mpsp'),
-       page.click('button')
-     ]);
+    await page.waitFor('body');
+
+    await page.$eval('#username', el => el.value = 'fiap');
+    await page.$eval('#password', el => el.value = 'mpsp');
+    //page.$eval('#idNomePesq', el => el.value = 'teste');
+
+    await page.click('button');
 
     await page.goto(sivec);
 
@@ -34,9 +33,7 @@ async function portalSivec() {
 
     await page.click('#procurar');
 
-    await page.waitForNavigation({
-      waitUntil: 'load',
-    });
+    await page.waitFor('body');
 
     // trocar por input do usuário
     const a = await select(page).getElement('a:contains(1.157.644)');
@@ -47,10 +44,10 @@ async function portalSivec() {
       throw new Error("Link not found");
     }
 
-    await page.waitForNavigation({
-        waitUntil: 'load',
-      });
-
+   // await page.waitForSelector('table');
+   await page.waitForNavigation({
+    waitUntil: 'networkidle0',
+  });
     const data1 = await page.$$eval('table tr td span',
       spans => spans.map((span) => {
         return span.innerText.trim();
@@ -65,16 +62,22 @@ async function portalSivec() {
           value = this[i + 1];
         r[key] = value;
       }
+      console.log("R", r);
       return r;
     };
 
     var obj = await data1.toObject();
+    console.log("depois do to object", obj)
 
-    obj = fromEntries(
+    obj = await fromEntries(
       Object.entries(obj).map(([k, v]) => [k.toLowerCase(), v])
     );
 
     await browser.close();
+
+    console.log("CÓDIGO ->",obj);
+
+    return obj;
 
   } catch (error) {
     console.log(error);
@@ -82,7 +85,7 @@ async function portalSivec() {
       browser.close();
     }
   }
-}
+};
 
 module.exports = portalSivec;
 
