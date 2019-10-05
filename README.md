@@ -30,9 +30,8 @@ $ docker run -it --rm --network host ubuntu/node-scrapping
 
 ### API's runs at port 3000
 
-If you are on linux:
-On browser type:
-```
+If you are on linux, on browser type:
+```bash
 localhost:3000/url
 ```
 
