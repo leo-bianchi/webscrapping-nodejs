@@ -1,21 +1,21 @@
 /*jshint esversion: 8 */
 
-var express = require("express");
-const func = require('./index.js');
+const express = require("express");
+const sivecPortal = require('./sivecPortal.js');
 
-var app = express();
+const app = express();
 
 app.listen(3000, () => {
- console.log("Server running on port 3000");
+  console.log("Server running on port 3000");
 });
 
-app.get("/url", (req, res, next) => {
-    getResult().then((obj) =>{
-        res.json(obj);
-    });
+app.get("/api", (req, res, next) => {
+  getResult().then((obj) => {
+    res.json(obj);
+  });
 });
 
 async function getResult() {
-    const obj = await func();
-    return obj;
+  const obj = await sivecPortal();
+  return obj;
 }
