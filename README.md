@@ -29,7 +29,7 @@ $ npm test
 
 ### Access API: Open the browser, then type:
 ```
-localhost:3000/url
+localhost:3000/api
 ```
 
 ## Authors
