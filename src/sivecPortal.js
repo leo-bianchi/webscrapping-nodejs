@@ -1,7 +1,6 @@
 /*jshint esversion: 8 */
 const select = require('puppeteer-select');
-const fromEntries = require('object.fromentries');
-const removeAccents = require('./libs/removeAccents.js');
+const parse = require('./libs/parseObject.js');
 const chromeInstance = require('./libs/getChrome.js');
 
 const sivec = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/sivec/pagina3-pesquisa-rg.html';
@@ -46,7 +45,7 @@ module.exports = async function sivecPortal() {
       let r = {};
 
       for (let i = 0; i < this.length; i += 2) {
-        let key = removeAccents(this[i]),
+        let key = (this[i]),
           value = this[i + 1];
         r[key] = value;
       }
@@ -55,9 +54,11 @@ module.exports = async function sivecPortal() {
 
     var obj = await data.toObject();
 
+    obj = await parse.buildJson(obj);
+
     // Global
-    obj = fromEntries(
-      Object.entries(obj).map(([k, v]) => [k.toLowerCase(), v.toUpperCase()])
+    obj = await Object.fromEntries(
+      Object.entries(obj).map(([k, v]) => [k, v])
     );
 
     await page.close();
