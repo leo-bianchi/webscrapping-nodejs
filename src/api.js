@@ -1,21 +1,43 @@
-/*jshint esversion: 8 */
+/*jshint esversion: 9, strict: true, node: true */
 
-const express = require("express");
-const sivecPortal = require('./sivecPortal.js');
+(function() {
+  'use strict';
 
-const app = express();
+  const express = require('express');
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
+  const sivecPortal = require('./portals/sivecPortal.js');
+  const sielPortal = require('./portals/sielPortal.js');
+  const cadespPortal = require('./portals/cadespPortal.js');
+  const detranPortal = require('./portals/detranPortal.js');
 
-app.get("/api", (req, res, next) => {
-  getResult().then((obj) => {
-    res.json(obj);
+  const app = express();
+  const port = 3000;
+
+  app.listen(port, () => {
+    console.log('Server running on port', port);
   });
-});
 
-async function getResult() {
-  const obj = await sivecPortal();
-  return obj;
-}
+  app.get('/api', (req, res, next) => {
+    getResult().then((obj) => {
+      res.json(obj);
+    });
+  });
+
+  async function getResult() {
+
+    let obj = detranPortal();
+    //
+    // let [sivec, cadesp, siel] = await Promise.all(
+    //   [
+    //     sivecPortal(),
+    //     cadespPortal(),
+    //     sielPortal(),
+    //     detranPortal(),
+    //   ]);
+
+    return obj;
+
+    // return [sivec, cadesp];
+  }
+
+}());

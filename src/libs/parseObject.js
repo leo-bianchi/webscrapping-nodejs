@@ -1,46 +1,70 @@
-/* jshint esversion: 8*/
-function buildJson(data) {
-  data = Object.keys(data).map(function(key, index) {
-    let r = {
-      'field-name': fixJson(key).toLowerCase(),
-      'label': key.toUpperCase(),
-      'value': data[key],
-      'order': index
-    };
-    return r;
-  });
-  return data;
-}
+/*jshint esversion: 9, strict: true, node: true */
 
-function fixJson(newString) {
-  let str = newString;
-
-  let accentsHexMap = {
-    a: /[\xE0-\xE6]/g,
-    A: /[\xC0-\xC6]/g,
-    e: /[\xE8-\xEB]/g,
-    E: /[\xC8-\xCB]/g,
-    i: /[\xEC-\xEF]/g,
-    I: /[\xCC-\xCF]/g,
-    o: /[\xF2-\xF6]/g,
-    O: /[\xD2-\xD6]/g,
-    u: /[\xF9-\xFC]/g,
-    U: /[\xD9-\xDC]/g,
-    c: /\xE7/g,
-    C: /\xC7/g,
-    n: /\xF1/g,
-    N: /\xD1/g,
-    '-': /\s/g,
-  };
-
-  for (let letter in accentsHexMap) {
-    let regex = accentsHexMap[letter];
-    str = str.replace(regex, letter);
+(function() {
+  'use strict';
+  /**
+   * Build Json to template
+   *
+   * @param {Object} data - Object to be build
+   * @returns {Object} Builded JSON
+   * @module buildJson
+   */
+  function buildJson(data) {
+    data = Object.keys(data).map(function(key, index) {
+      let obj = {
+        'name': fixJson(key),
+        'label': key.toUpperCase(),
+        'value': data[key],
+        'order': index
+      };
+      return obj;
+    });
+    return data;
   }
 
-  return str;
-}
+  /**
+   * Normalize JSON
+   *
+   * @param {string} str - String to be normalized
+   * @returns {string} Normalized string
+   */
+  function fixJson(str) {
+    return str.normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, '-')
+      .toLowerCase();
+  }
 
-module.exports = {
-  buildJson,
-};
+  /**
+   * Constructs an object from a array, using even indexes as key and odd indices as value
+   *
+   * @param {Array} array - Array to be transformed
+   * @returns {Object}
+   * @module toObject
+   */
+  function toObject(array) {
+    let r = {};
+
+    for (let i = 0; i < array.length; i += 2) {
+      let key = (array[i]),
+        value = array[i + 1];
+      r[key] = value;
+    }
+    return buildJson(r);
+  }
+
+  function matrix(a) {
+    let r = [];
+    for (let i = 0; i < a.length; i++) {
+      for (let z = 0; z < a[i].length; z++) {
+        r.push(a[i][z]);
+      }
+    }
+    return buildJson(r);
+  }
+
+  module.exports = {
+    buildJson,
+  };
+
+}());
