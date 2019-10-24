@@ -3,6 +3,11 @@
 (function() {
   'use strict';
 
+  const request_client = require('request-promise-native');
+
+  const path = require('path');
+  const fs = require('fs');
+
   const puppeteer = require('puppeteer');
 
   /**
@@ -29,11 +34,11 @@
   /**
    * Create new Chromium
    * @async
-   * @param {string} portal - Portal URL
+   * @param {string} _portal - Portal URL
    * @returns {Object} Logged Page
    * @module chromeInstance
    */
-  async function chromeInstance(portal) {
+  async function chromeInstance(_portal) {
 
     try {
       const browser = await puppeteer.launch({
@@ -65,15 +70,15 @@
        * @type {Object}
        * @default
        */
-      let pages = await browser.pages();
+      const pages = await browser.pages();
 
       await pages[0].close();
 
       await page.goto(url).then(
         await doLogin(page, username, password)).then(
-        await page.goto(portal));
+        await page.goto(_portal));
 
-      return page;
+      return [page, browser];
 
     } catch (e) {
       console.log("Failed on Chrome Instance\n", e);
@@ -113,8 +118,57 @@
     return _data;
   }
 
+  async function getPdf(_context, _action, _pdfName, _dir) {
+
+    let dir = path.join(__dirname, '/docs/');
+
+    await _context.setRequestInterception(true);
+
+    _context.prependListener(_action, request => {
+      if (request.url().endsWith('.pdf')) {
+        request_client({
+          uri: request.url(),
+          encoding: null,
+          headers: {
+            'Content-type': 'applcation/pdf',
+          },
+        }).then(response => {
+          let id = function() {
+            let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let c = '';
+            let cLength = characters.length;
+            for (let i = 0; i < 8; i++) {
+              c += characters.charAt(Math.floor(Math.random() * cLength));
+            }
+            return c;
+          };
+          fs.writeFileSync(dir + _pdfName + ' - ' + id() + '.pdf', response);
+          request.continue();
+          response = null;
+        });
+      } else {
+        request.continue();
+      }
+    });
+  }
+
+  async function savePdf(_file, _dir, _name) {
+
+    let filename = _name + Math.random().toString(36).substring(6) + '.pdf';
+
+    let dir = path.join(__dirname, '/docs/' + _dir);
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    fs.writeFileSync(dir + filename, _file);
+  }
+
   module.exports = {
     chromeInstance,
     evaluateData,
+    getPdf,
+    savePdf,
   };
+
 }());

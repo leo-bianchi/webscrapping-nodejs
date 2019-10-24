@@ -2,12 +2,12 @@
   "name": "webscrapping-nodejs",
   "version": "1.0.0",
   "description": "An web scrapping tool developed using NodeJs and Puppeteer lib.",
-  "main": "src/api.js",
+  "main": "src/app.js",
   "directories": {
     "lib": "lib"
   },
   "scripts": {
-    "test": "node ./src/api.js"
+    "test": "node ./src/app.js"
   },
   "repository": {
     "type": "git",
@@ -20,10 +20,16 @@
   },
   "homepage": "https://github.com/leo-bianchi/webscrapping-nodejs#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "https-proxy-agent": "^3.0.0",
+    "fs": "0.0.1-security",
+    "mysql": "^2.17.1",
+    "path": "^0.12.7",
     "puppeteer": "^1.20.0",
-    "puppeteer-select": "^1.0.3"
+    "puppeteer-select": "^1.0.3",
+    "request": "^2.88.0",
+    "request-promise-core": "^1.1.2",
+    "request-promise-native": "^1.0.7"
   },
   "devDependencies": {}
 }

@@ -22,7 +22,9 @@
 
     try {
 
-      const page = await chrome.chromeInstance(cadesp);
+      const instances = await chrome.chromeInstance(cadesp);
+
+      const page = instances[0];
 
       await page.waitForSelector('input[type=submit]');
       // isto tem que ser alterado para o input do usuário no form.
@@ -46,20 +48,20 @@
       await page.waitForSelector('table');
 
       const label = await chrome
-        .evaluateData(page, 'table#ctl00_conteudoPaginaPlaceHolder_dlCabecalho .labelDetalhe');
+        .evaluateData(page, 'table#ctl00_conteudoPaginaPlaceHolder_dlCabecalho .labelDetalhe')
+        .innerText;
 
       const data = await chrome
-        .evaluateData(page, 'table#ctl00_conteudoPaginaPlaceHolder_dlCabecalho .dadoDetalhe');
+        .evaluateData(page, 'table#ctl00_conteudoPaginaPlaceHolder_dlCabecalho .dadoDetalhe')
+        .innerText;
 
-      var newData = await removeEmptyEntries(newData);
+      const newData = data.filter(Boolean);
 
-      var newLabel = await removeEmptyEntries(newLabel);
+      const newLabel = data.filter(Boolean);
 
-      let newArray = await parseArray(newData, newLabel);
+      const newArray = await parseArray(newData, newLabel);
 
-      let obj = await parse.toObject(newArray);
-
-      obj = await parse.buildJson(obj);
+      const obj = await parse.toObject(newArray);
 
       await page.close();
 
@@ -82,8 +84,8 @@
   function parseArray(_data, _label) {
     let _array = [];
     for (let i = 0; i < _data.length; i++) {
-      array.push(_label[i]);
-      array.push(_data[i]);
+      _array.push(_label[i]);
+      _array.push(_data[i]);
     }
     return _array;
   }
@@ -92,8 +94,8 @@
     @function
     @returns {Array}
   */
-  function removeEmptyEntries(_array) {
-    _array.filter(x => x != '');
+  async function removeEmptyEntries(_array) {
+    await _array.filter(Boolean);
 
     return _array;
   }

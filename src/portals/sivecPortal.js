@@ -19,15 +19,18 @@
    * @module sivecPortal
    * @returns {Object}
    */
-  module.exports = async function sivecPortal() {
+  module.exports = async function sivecPortal(rg) {
 
     try {
+      let input = rg;
 
-      const page = await chrome.chromeInstance(sivec);
+      const instances = await chrome.chromeInstance(sivec);
+
+      const page = instances[0];
 
       await page.waitForSelector('#idValorPesq');
-      // isto tem que ser alterado para o input do usuário no form.
-      await page.$eval('#idValorPesq', el => el.value = '1.157.644');
+
+      await page.$eval('#idValorPesq', (el, _input) => el.value = _input, input);
 
       await page.click('#procurar');
 
@@ -36,7 +39,8 @@
       });
 
       // trocar por input do usuário
-      const a = await select(page).getElement('a:contains(1.157.644)');
+      const a = await select(page)
+        .getElement('a:contains(' + input + ')');
 
       if (a) {
         await a.click();
@@ -45,15 +49,12 @@
       }
 
       await page.waitForNavigation({
-        waitUntil: 'load',
+        waitUntil: 'networkidle0',
       });
 
-      const data = await chrome
-        .evaluateData(page, 'table tr td span');
+      const data = await chrome.evaluateData(page, 'table tr td span');
 
-      let obj = await parse.toObject(data);
-
-      obj = await parse.buildJson(obj);
+      const obj = await parse.toObject(data);
 
       await page.close();
 

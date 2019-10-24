@@ -5,32 +5,34 @@
   /**
    * Build Json to template
    *
-   * @param {Object} data - Object to be build
+   * @param {Object} _data - Object to be build
    * @returns {Object} Builded JSON
    * @module buildJson
    */
-  function buildJson(data) {
-    data = Object.keys(data).map(function(key, index) {
+  function buildJson(_data) {
+    _data = Object.keys(_data).map(function(key, index) {
       let obj = {
         'name': fixJson(key),
         'label': key.toUpperCase(),
-        'value': data[key],
+        'value': _data[key],
         'order': index
       };
       return obj;
     });
-    return data;
+    return _data;
   }
 
   /**
    * Normalize JSON
    *
-   * @param {string} str - String to be normalized
+   * @param {string} _str - String to be normalized
    * @returns {string} Normalized string
    */
-  function fixJson(str) {
-    return str.normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, "")
+  function fixJson(_str) {
+    return _str.normalize('NFD')
+      .replace(/\uFFFD/g, '')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z ]/g, '')
       .replace(/\s+/g, '-')
       .toLowerCase();
   }
@@ -38,33 +40,39 @@
   /**
    * Constructs an object from a array, using even indexes as key and odd indices as value
    *
-   * @param {Array} array - Array to be transformed
+   * @param {Array} _array - Array to be transformed
    * @returns {Object}
-   * @module toObject
    */
-  function toObject(array) {
+  function toObject(_array) {
     let r = {};
 
-    for (let i = 0; i < array.length; i += 2) {
-      let key = (array[i]),
-        value = array[i + 1];
+    for (let i = 0; i < _array.length; i += 2) {
+      let key = (_array[i]),
+        value = _array[i + 1];
       r[key] = value;
     }
     return buildJson(r);
   }
 
-  function matrix(a) {
+  /**
+   * Constructs an object from a bidimensional array, using even indexes as key and odd indices as value
+   *
+   * @param {Array.<Array>} _a - Array to be transformed
+   * @returns {Object}
+   */
+  function matrixToObject(_a) {
     let r = [];
-    for (let i = 0; i < a.length; i++) {
-      for (let z = 0; z < a[i].length; z++) {
+    for (let i = 0; i < _a.length; i++) {
+      for (let z = 0; z < _a[i].length; z++) {
         r.push(a[i][z]);
       }
     }
-    return buildJson(r);
+    return toObject(r);
   }
 
   module.exports = {
-    buildJson,
+    toObject,
+    matrixToObject,
   };
 
 }());

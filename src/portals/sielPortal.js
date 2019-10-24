@@ -22,7 +22,9 @@
 
     try {
 
-      const page = await chrome.chromeInstance(siel);
+      const instances = await chrome.chromeInstance(siel);
+
+      const page = instances[0];
 
       await page.waitForSelector('input[type=submit]');
 
@@ -39,13 +41,12 @@
       await page.waitForSelector('table.lista tbody tr td');
 
       const data = await chrome
-        .evaluateData(page, 'table tr td');
+        .evaluateData(page, 'table tr td')
+        .innerText;
 
       data.splice(0, 2);
 
-      let obj = await parse.toObject(data);
-
-      obj = await parse.buildJson(obj);
+      const obj = await parse.toObject(data);
 
       await page.close();
 
