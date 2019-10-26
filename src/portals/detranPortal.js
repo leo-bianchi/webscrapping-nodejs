@@ -26,15 +26,12 @@
         const page = await instances[0];
 
         await page.waitForSelector('span.ui-button-text');
-
         await page.click('button[name="form:j_id563205015_44efc15b"]');
 
         await page.waitForSelector('a#navigation_a_M_16');
-
         await page.click('a#navigation_a_M_16');
 
         await page.waitForSelector('a#navigation_a_F_16');
-
         await page.click('a[href="pagina3-pesquisa-linha-de-vida.html"]');
 
         await page.waitForSelector('a[href="pagina6-relatório-linha-de-vida.pdf"]');
@@ -48,11 +45,9 @@
         await page.goto(newUrl + '/pagina2-pesquisa.html');
 
         await page.waitForSelector('a#navigation_a_M_18');
-
         await page.click('a#navigation_a_M_18');
 
         await page.waitForSelector('a[href="pagina5-pesquisa-veiculo.html"]');
-
         await page.click('a[href="pagina5-pesquisa-veiculo.html"]');
 
         await page.waitForSelector('a[href="pagina7-relatório-veiculo.pdf"]');
@@ -66,11 +61,9 @@
         await page.goto(newUrl + '/pagina2-pesquisa.html');
 
         await page.waitForSelector('a#navigation_a_M_16');
-
         await page.click('a#navigation_a_M_16');
 
         await page.waitForSelector('a[href="pagina4-pesquisa-imagem-cnh.html"]');
-
         await page.click('a[href="pagina4-pesquisa-imagem-cnh.html"]');
 
         await page.waitForSelector('a[href="pagina7-imagem-cnh.html"]');
@@ -86,8 +79,7 @@
         await newPage.waitForSelector('table.comBordaLeftBottom');
 
         let data = await chrome
-          .evaluateData(newPage, 'table.comBordaLeftBottom')
-          .innerText;
+          .evaluateData(newPage, 'table.comBordaLeftBottom');
 
         let array = [];
 
@@ -97,6 +89,10 @@
         }
 
         const obj = await parse.matrixToObject(array);
+
+        await page.close();
+
+        await newPage.close();
 
         return obj;
 

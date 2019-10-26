@@ -48,16 +48,14 @@
       await page.waitForSelector('table');
 
       const label = await chrome
-        .evaluateData(page, 'table#ctl00_conteudoPaginaPlaceHolder_dlCabecalho .labelDetalhe')
-        .innerText;
+        .evaluateData(page, 'table#ctl00_conteudoPaginaPlaceHolder_dlCabecalho .labelDetalhe');
 
       const data = await chrome
-        .evaluateData(page, 'table#ctl00_conteudoPaginaPlaceHolder_dlCabecalho .dadoDetalhe')
-        .innerText;
+        .evaluateData(page, 'table#ctl00_conteudoPaginaPlaceHolder_dlCabecalho .dadoDetalhe');
 
-      const newData = data.filter(Boolean);
+      const newData = await data.filter(Boolean);
 
-      const newLabel = data.filter(Boolean);
+      const newLabel = await data.filter(Boolean);
 
       const newArray = await parseArray(newData, newLabel);
 
@@ -87,16 +85,6 @@
       _array.push(_label[i]);
       _array.push(_data[i]);
     }
-    return _array;
-  }
-
-  /**
-    @function
-    @returns {Array}
-  */
-  async function removeEmptyEntries(_array) {
-    await _array.filter(Boolean);
-
     return _array;
   }
 

@@ -48,7 +48,6 @@
 
       return obj;
 
-
     } catch (error) {
       console.log('Portal Arpenp =>', error);
       if (typeof page !== 'undefined') {

@@ -41,10 +41,9 @@
       await page.waitForSelector('table.lista tbody tr td');
 
       const data = await chrome
-        .evaluateData(page, 'table tr td')
-        .innerText;
+        .evaluateData(page, 'table tr td');
 
-      data.splice(0, 2);
+      await data.splice(0, 2);
 
       const obj = await parse.toObject(data);
 

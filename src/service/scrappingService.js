@@ -1,34 +1,46 @@
-/*jshint esversion: 9, node: true, strict: true */
+const sivecPortal = require('../portals/sivecPortal.js');
+const sielPortal = require('../portals/sielPortal.js');
+const cadespPortal = require('../portals/cadespPortal.js');
+const detranPortal = require('../portals/detranPortal.js');
+const arpenpPortal = require('../portals/arpenpPortal.js');
+const infocrimPortal = require('../portals/infocrimPortal.js');
+const censecPortal = require('../portals/censecPortal.js');
 
-(function() {
-  'use strict';
+const db_service = require('./dbService.js');
 
-  const sivecPortal = require('../portals/sivecPortal.js');
-  const sielPortal = require('../portals/sielPortal.js');
-  const cadespPortal = require('../portals/cadespPortal.js');
-  const detranPortal = require('../portals/detranPortal.js');
-  const arpenpPortal = require('../portals/arpenpPortal.js');
-  const infocrimPortal = require('../portals/infocrimPortal.js');
-  const censecPortal = require('../portals/censecPortal');
 
-  scrapAll().then((obj) => {
-    console.log(obj);
-  });
+scrapAll().then((obj) => {
+  console.log(obj);
+});
 
-  async function scrapAll() {
-    console.log('startou');
 
-    let obj = censecPortal();
+async function scrapAll( /*parm*/ ) {
+  // let obj;
+  // if(parm.rg){
+  //   var rg = parm.rg;
+  //     obj = await sivecPortal(rg);
+  // }
 
-    // let [sivec, cadesp, siel, detran] = await Promise.all(
-    //   [
-    //     sivecPortal(),
-    //     cadespPortal(),
-    //     sielPortal(),
-    //     detranPortal(),
-    //   ]);
+  let obj = infocrimPortal();
 
-    return obj;
-  }
+  // let [sivec, cadesp, siel, detran, arpenp, infocrim, censec] = await Promise.all(
+  //   [
+  //     sivecPortal(),
+  //     cadespPortal(),
+  //     sielPortal(),
+  //     detranPortal(),
+  //     arpenpPortal(),
+  //     infocrimPortal(),
+  //     censecPortal()
+  //   ]);
 
-}());
+  //return await db_service.updatePerson(obj, parm.cpf, parm.user);
+
+  return obj;
+
+}
+
+
+module.exports = {
+  scrapAll: scrapAll
+};

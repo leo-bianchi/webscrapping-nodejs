@@ -64,7 +64,7 @@
     let r = [];
     for (let i = 0; i < _a.length; i++) {
       for (let z = 0; z < _a[i].length; z++) {
-        r.push(a[i][z]);
+        r.push(_a[i][z]);
       }
     }
     return toObject(r);
