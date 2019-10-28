@@ -4,7 +4,7 @@ const router = require('express').Router();
 const db_service = require('../service/db_service');
 const parse = require('../libs/parseObject.js');
 const response = require('../model/responseModel').responseModel;
-const scrapping = require('../service/scrapping_service');
+const scrapping = require('../service/scrappingService');
 
 router.get('/search', async function(req, res) {
   response.status = 200;
