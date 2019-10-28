@@ -3,7 +3,7 @@
 const router = require('express').Router();
 const db_service = require("../service/dbService");
 const parse = require('../libs/parseObject.js');
-const response = require("../model/response");
+const response = require("../model/responseModel.js");
 
 router.post('/login', async function(req, res) {
     var user = req.body;

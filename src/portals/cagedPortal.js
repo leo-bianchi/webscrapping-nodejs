@@ -29,11 +29,14 @@
       await page.waitForSelector('input[type=submit]');
       await page.click('input[type=submit]');
 
-      await page.waitForSelector('a.raiz');
-      await page.click('a.raiz');
+      await page.waitForSelector('span[id^="j_idt12:lk_menu_consultas"]');
+      await page.hover('span[id^="j_idt12:lk_menu_consultas"]');
 
       await page.waitForSelector('a[href="pagina3-consulta-autorizado-responsavel.html"]');
       await page.click('a[href="pagina3-consulta-autorizado-responsavel.html"]');
+
+      await page.waitForSelector('input[type="submit"]');
+      await page.click('input[type="submit"]');
 
 
     } catch (error) {
