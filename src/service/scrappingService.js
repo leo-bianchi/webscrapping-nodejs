@@ -7,6 +7,7 @@ const detranPortal = require('../portals/detranPortal.js');
 const arpenpPortal = require('../portals/arpenpPortal.js');
 const infocrimPortal = require('../portals/infocrimPortal.js');
 const censecPortal = require('../portals/censecPortal.js');
+const cagedPortal = require('../portals/cagedPortal.js');
 
 const db_service = require('./dbService.js');
 
@@ -23,7 +24,7 @@ async function scrapAll( /*parm*/ ) {
   //     obj = await sivecPortal(rg);
   // }
 
-  let obj = cadespPortal();
+  let obj = cagedPortal();
 
   // let [sivec, cadesp, siel, detran, arpenp, infocrim, censec] = await Promise.all(
   //   [
