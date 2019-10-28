@@ -9,7 +9,7 @@ const infocrimPortal = require('../portals/infocrimPortal.js');
 const censecPortal = require('../portals/censecPortal.js');
 const cagedPortal = require('../portals/cagedPortal.js');
 
-const db_service = require('./dbService.js');
+const db_service = require('./db_service.js');
 
 
 scrapAll().then((obj) => {

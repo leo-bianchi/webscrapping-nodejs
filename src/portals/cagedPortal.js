@@ -29,6 +29,12 @@
       await page.waitForSelector('input[type=submit]');
       await page.click('input[type=submit]');
 
+      await page.waitForSelector('span#j_idt12:lk_menu_consultas');
+      await page.click('span#j_idt12:lk_menu_consultas');
+
+      await page.waitForSelector('a[href="pagina3-consulta-autorizado-responsavel.html"]');
+      await page.click('a[href="pagina3-consulta-autorizado-responsavel.html"]');
+
 
     } catch (error) {
       console.log('Portal Cadesp =>', error);
