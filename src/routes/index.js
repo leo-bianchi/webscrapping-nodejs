@@ -1,10 +1,10 @@
 //jshint esversion: 8
 
 const router = require('express').Router();
-const db_service = require('../service/db_service');
+const db_service = require('../service/dbService.js');
 const parse = require('../libs/parseObject.js');
-const response = require('../model/responseModel');
-const scrapping = require('../service/scrapping_service');
+const response = require('../model/response.js');
+const scrapping = require('../service/scrappingService.js');
 
 router.get('/search', async function(req, res) {
   response.status = 200;

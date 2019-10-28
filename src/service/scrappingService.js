@@ -9,13 +9,7 @@ const infocrimPortal = require('../portals/infocrimPortal.js');
 const censecPortal = require('../portals/censecPortal.js');
 const cagedPortal = require('../portals/cagedPortal.js');
 
-const db_service = require('./db_service.js');
-
-
-scrapAll().then((obj) => {
-  console.log(obj);
-});
-
+const db_service = require('./dbService.js');
 
 async function scrapAll( /*parm*/ ) {
   // let obj;
@@ -24,18 +18,18 @@ async function scrapAll( /*parm*/ ) {
   //     obj = await sivecPortal(rg);
   // }
 
-  let obj = cagedPortal();
+  //let obj = cagedPortal();
 
-  // let [sivec, cadesp, siel, detran, arpenp, infocrim, censec] = await Promise.all(
-  //   [
-  //     sivecPortal(),
-  //     cadespPortal(),
-  //     sielPortal(),
-  //     detranPortal(),
-  //     arpenpPortal(),
-  //     infocrimPortal(),
-  //     censecPortal()
-  //   ]);
+  let [sivec, cadesp, siel, detran, arpenp, infocrim, censec] = await Promise.all(
+    [
+      sivecPortal(),
+      cadespPortal(),
+      sielPortal(),
+      detranPortal(),
+      arpenpPortal(),
+      infocrimPortal(),
+      censecPortal()
+    ]);
 
   //return await db_service.updatePerson(obj, parm.cpf, parm.user);
 

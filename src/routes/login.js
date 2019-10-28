@@ -1,9 +1,9 @@
 /* jshint esversion: 9, node: true*/
 
 const router = require('express').Router();
-const db_service = require("../service/db_service");
+const db_service = require("../service/dbService");
 const parse = require('../libs/parseObject.js');
-const response = require("../model/responseModel");
+const response = require("../model/response");
 
 router.post('/login', async function(req, res) {
     var user = req.body;
