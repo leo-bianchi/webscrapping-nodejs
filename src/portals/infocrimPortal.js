@@ -29,8 +29,8 @@
       await page.waitForSelector('a[href="pagina2-pesquisa.html"]');
       await page.click('a[href="pagina2-pesquisa.html"]');
 
-      await page.waitForSelector('a[href="pagina3-dados.html"]');
-      await page.click('a[href="pagina3-dados.html"]');
+      await page.waitForSelector('a#submit');
+      await page.click('a#submit');
 
       await page.waitForSelector('a[href="pagina4-detalhes-bo.html"]');
       await page.click('a[href="pagina4-detalhes-bo.html"]');
@@ -46,21 +46,21 @@
       let p = [];
 
       for (let entry of array) {
-        array = entry.split(/\n/);
+        array = entry.split(/\n/g);
         for (let a of array) {
           a = a.trim();
-          let hora = a.substring(a.indexOf('HORA'));
-          hora = hora.trim();
-          p.push(hora);
+          let hora = a.replace(/HORA/g, "@@@.HORA");
+          let newHora = hora.split("@@@.");
+          for (let n of newHora) {
+            n = n.trim();
+            p.push(n);
+          }
         }
       }
 
-      p.verify();
-
-    //  p.fix();
-
-      console.log(p);
-
+      await p.verify();
+      await p.fix();
+      
       const obj = parse.toObject(p);
 
       await page.close();
@@ -86,17 +86,17 @@ Array.prototype.verify = function() {
   return this;
 };
 
-Array.prototype.fix = function() {
+Array.prototype.fix = function(elem) {
   for (let i = 0; i < this.length; i++) {
     if (this[i] == '' && this[i + 1] == '') {
       this.splice(i, 2);
     }
   }
-  this.splice(9, 1);
 
-  this.splice(26, 1);
+  this.splice(4, 1);
+  this.splice(8, 1);
+  this.splice(28, 1);
 
   this.pop();
-
   return this;
 };

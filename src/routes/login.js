@@ -1,3 +1,5 @@
+/* jshint esversion: 9, node: true*/
+
 const router = require('express').Router();
 const db_service = require("../service/db_service");
 const parse = require('../libs/parseObject.js');

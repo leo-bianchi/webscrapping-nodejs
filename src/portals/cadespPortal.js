@@ -55,7 +55,7 @@
 
       const newData = await data.filter(Boolean);
 
-      const newLabel = await data.filter(Boolean);
+      const newLabel = await label.filter(Boolean);
 
       const newArray = await parseArray(newData, newLabel);
 

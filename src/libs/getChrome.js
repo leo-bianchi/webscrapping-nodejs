@@ -95,7 +95,7 @@
    */
   async function doLogin(_page, _usr, _passwd) {
     await _page.waitForNavigation({
-      waitUntil: 'load'
+      waitUntil: 'networkidle0'
     });
     await _page.type('#username', _usr);
     await _page.type('#password', _passwd);

@@ -6,13 +6,6 @@ const parse = require('../libs/parseObject.js');
 const response = require('../model/responseModel').responseModel;
 const scrapping = require('../service/scrapping_service');
 
-
-/*
-    resp = {
-        status DEFAULT 404
-        data ARRAY
-    }
-*/
 router.get('/search', async function(req, res) {
   response.status = 200;
 
@@ -32,7 +25,7 @@ router.get('/search', async function(req, res) {
     response.data = await db_service.selectHistoric(objeto);
 
     if (response.data.length > 0) {
-      //TEM HISTORICO
+
       if (response.data[0].PESQUISA_STATUS == "Concluido") {
 
         response.data = await db_service.searchPersonCPForRG(objeto);
@@ -59,8 +52,6 @@ router.get('/search', async function(req, res) {
         }];
       }
     } else {
-      //NÃO TEM HISTORICO
-
       response.data = await db_service.searchPersonCPForRG(objeto);
       if (response.data.length > 0) {
         var keys = response.data[0].ID_PESSOA;
@@ -138,6 +129,14 @@ router.get('/historic', async function(req, res) {
   response.status = 200;
   var id = req.query.id;
   response.data = await db_service.selectAllHistoric(id);
+  res.send(response);
+
+});
+
+router.get('/fields', async function(req, res) {
+  response.status = 200;
+  response.data = await db_service.getFields();
+  res.statusCode = response.status;
   res.send(response);
 
 });

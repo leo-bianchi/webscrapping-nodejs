@@ -1,3 +1,5 @@
+/* jshint esversion: 9 */
+
 const sivecPortal = require('../portals/sivecPortal.js');
 const sielPortal = require('../portals/sielPortal.js');
 const cadespPortal = require('../portals/cadespPortal.js');
@@ -21,7 +23,7 @@ async function scrapAll( /*parm*/ ) {
   //     obj = await sivecPortal(rg);
   // }
 
-  let obj = infocrimPortal();
+  let obj = cadespPortal();
 
   // let [sivec, cadesp, siel, detran, arpenp, infocrim, censec] = await Promise.all(
   //   [
