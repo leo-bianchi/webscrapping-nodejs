@@ -119,37 +119,36 @@
   }
 
   async function getPdf(_context, _action, _pdfName, _dir) {
+    return new Promise(async function(resolve, reject) {
+      let dir = path.join(__dirname, '/docs/');
 
-    let dir = path.join(__dirname, '/docs/');
+      await _context.setRequestInterception(true);
 
-    await _context.setRequestInterception(true);
-
-    _context.prependListener(_action, request => {
-      if (request.url().endsWith('.pdf')) {
-        request_client({
-          uri: request.url(),
-          encoding: null,
-          headers: {
-            'Content-type': 'applcation/pdf',
-          },
-        }).then(response => {
-          let id = function() {
-            let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let c = '';
-            let cLength = characters.length;
-            for (let i = 0; i < 8; i++) {
-              c += characters.charAt(Math.floor(Math.random() * cLength));
-            }
-            return c;
-          };
-          response.toString('base64');
-          fs.writeFileSync(dir + _pdfName + ' - ' + id() + '.pdf', response);
+      _context.prependListener(_action, request => {
+        if (request.url().endsWith('.pdf')) {
+          request_client({
+            uri: request.url(),
+            encoding: null,
+            headers: {
+              'Content-type': 'applcation/pdf',
+            },
+          }).then(response => {
+            let id = function() {
+              let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+              let c = '';
+              let cLength = characters.length;
+              for (let i = 0; i < 8; i++) {
+                c += characters.charAt(Math.floor(Math.random() * cLength));
+              }
+              return c;
+            };
+            resolve(response.toString('base64'));
+            request.continue();
+          });
+        } else {
           request.continue();
-          return response.then(response = null);
-        });
-      } else {
-        request.continue();
-      }
+        }
+      });
     });
   }
 
