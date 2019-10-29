@@ -142,9 +142,10 @@
             }
             return c;
           };
+          response.toString('base64');
           fs.writeFileSync(dir + _pdfName + ' - ' + id() + '.pdf', response);
           request.continue();
-          response = null;
+          return response.then(response = null);
         });
       } else {
         request.continue();
@@ -152,23 +153,10 @@
     });
   }
 
-  async function savePdf(_file, _dir, _name) {
-
-    let filename = _name + Math.random().toString(36).substring(6) + '.pdf';
-
-    let dir = path.join(__dirname, '/docs/' + _dir);
-
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
-    fs.writeFileSync(dir + filename, _file);
-  }
-
   module.exports = {
     chromeInstance,
     evaluateData,
     getPdf,
-    savePdf,
   };
 
 }());
