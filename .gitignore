@@ -1,4 +1,4 @@
-# Logs
+on# Logs
 logs
 *.log
 npm-debug.log*
@@ -88,8 +88,5 @@ typings/
 .dynamodb/
 
 # Nodeenv
-bin/
-include/
-share/
-src/node-v12.3.1-linux-x64
-lib
+
+env/

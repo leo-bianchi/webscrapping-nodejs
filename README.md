@@ -32,13 +32,21 @@ $ docker run -it --rm --network host ubuntu/node-scrapping
 
 If you are on linux, on browser type:
 ```bash
+<<<<<<< HEAD
 localhost:3000/url
+=======
+localhost:3000/api
+>>>>>>> feature_tmp
 ```
 
 Windows:
 On browser type:
 ```
+<<<<<<< HEAD
 192.168.99.100:3000/url
+=======
+192.168.99.100:3000/api
+>>>>>>> feature_tmp
 ```
 
 ## Authors
