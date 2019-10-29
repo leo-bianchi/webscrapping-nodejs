@@ -32,7 +32,7 @@
     return _str.normalize('NFD')
       .replace(/\uFFFD/g, '')
       .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-zA-Z ]/g, '')
+      .replace(/[^A-Za-z0-9+ ]/g, '')
       .replace(/\s+/g, '-')
       .toLowerCase();
   }
