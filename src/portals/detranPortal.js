@@ -38,7 +38,7 @@
 
         const newUrl = await detran.replace('/login.html', '');
 
-        chrome.getPdf(page, 'request', 'DETRAN - Relatorio Linha de Vida');
+        const linhaDeVida = chrome.getPdf(page, 'request', 'DETRAN - Relatorio Linha de Vida');
 
         await page.goto(newUrl + '/pagina6-relatório-linha-de-vida.pdf').catch(error => {});
 
@@ -54,7 +54,7 @@
 
         await page.removeAllListeners('request');
 
-        chrome.getPdf(page, 'request', 'DETRAN - Veiculo Base Estadual');
+        const baseEstadual = chrome.getPdf(page, 'request', 'DETRAN - Veiculo Base Estadual');
 
         await page.goto(newUrl + '/pagina7-relatório-veiculo.pdf').catch(error => {});
 
@@ -94,7 +94,7 @@
 
         await newPage.close();
 
-        return obj;
+        return [await obj, await linhaDeVida, await baseEstadual];
 
       } catch (error) {
         console.log('Portal Detran =>', error);
