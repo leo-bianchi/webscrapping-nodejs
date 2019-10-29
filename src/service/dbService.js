@@ -1,3 +1,5 @@
+/*jshint esversion: 8, node: true*/
+
 const db = require("../libs/conn.js");
 
  function selectHistoric(parm) {
