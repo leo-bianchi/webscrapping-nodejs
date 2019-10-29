@@ -24,7 +24,7 @@ async function scrapAll( /*parm*/ ) {
   //     obj = await sivecPortal(rg);
   // }
 
-  let obj = cagedPortal();
+  let obj = detranPortal();
 
   // let [sivec, cadesp, siel, detran, arpenp, infocrim, censec] = await Promise.all(
   //   [
