@@ -36,4 +36,4 @@ module.exports =
 {
     select : select,
     insert: insert
-}
+};
