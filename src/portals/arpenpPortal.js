@@ -46,6 +46,8 @@
 
       const obj = parse.toObject(newData);
 
+      await page.close();
+
       return obj;
 
     } catch (error) {

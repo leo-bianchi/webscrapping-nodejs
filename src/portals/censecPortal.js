@@ -217,7 +217,7 @@
       return obj;
 
     } catch (error) {
-      console.log('Portal Siel =>', error);
+      console.log('Portal Censec =>', error);
       if (typeof page !== 'undefined') {
         page.close();
       }

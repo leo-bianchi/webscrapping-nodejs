@@ -60,7 +60,7 @@
 
       await p.verify();
       await p.fix();
-      
+
       const obj = parse.toObject(p);
 
       await page.close();
@@ -68,7 +68,7 @@
       return obj;
 
     } catch (error) {
-      console.log('Portal Arpenp =>', error);
+      console.log('Portal Infocrim =>', error);
       if (typeof page !== 'undefined') {
         page.close();
       }
