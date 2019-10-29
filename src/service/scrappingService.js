@@ -1,5 +1,4 @@
-/* jshint esversion: 9 */
-
+const nodemailer = require('nodemailer');
 const sivecPortal = require('../portals/sivecPortal.js');
 const sielPortal = require('../portals/sielPortal.js');
 const cadespPortal = require('../portals/cadespPortal.js');
@@ -8,38 +7,59 @@ const arpenpPortal = require('../portals/arpenpPortal.js');
 const infocrimPortal = require('../portals/infocrimPortal.js');
 const censecPortal = require('../portals/censecPortal.js');
 const cagedPortal = require('../portals/cagedPortal.js');
+const dbService = require('./dbService.js');
+const response = require('../model/responseModel.js').responseModel;
 
-const db_service = require('./dbService.js');
-
-
-scrapAll().then((obj) => {
-  console.log(obj);
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // true for 465, false for other ports
+  auth: {
+    user: 'gbmadeira27@gmail.com',
+    pass: 'joao2000'
+  },
+  tls: { rejectUnauthorized: false }
 });
 
 
-async function scrapAll( /*parm*/ ) {
-  // let obj;
-  // if(parm.rg){
-  //   var rg = parm.rg;
-  //     obj = await sivecPortal(rg);
-  // }
+async function scrapAll(parm, id) {
 
-  let obj = detranPortal();
 
-  // let [sivec, cadesp, siel, detran, arpenp, infocrim, censec] = await Promise.all(
-  //   [
-  //     sivecPortal(),
-  //     cadespPortal(),
-  //     sielPortal(),
-  //     detranPortal(),
-  //     arpenpPortal(),
-  //     infocrimPortal(),
-  //     censecPortal()
-  //   ]);
 
-  //return await db_service.updatePerson(obj, parm.cpf, parm.user);
+  let [sivec, cadesp, siel, detran] = await Promise.all(
+     [
+          sivecPortal(parm.rg),
+          cadespPortal(),
+          /*sielPortal(),
+          detranPortal(),
+          arpenpPortal(),
+          infocrimPortal(),
+          censecPortal()*/
+     ]);
 
-  return obj;
+
+
+
+  await dbService.updatePerson(sivec, cadesp, parm.cpf, id);
+  dbService.updateHistoric(id);
+
+
+  response.data = await dbService.searchUser(parm.user);
+
+  const mailOptions = {
+    from: 'gbmadeira27@gmail.com',
+    to: response.data[0].EMAIL,
+    subject: 'Sua consulta foi concluída',
+    text: 'Sua consulta ao cpf '+parm.cpf+' foi concluida e está disponivel no portal'
+  };
+
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email enviado: ' + info.response);
+    }
+  });
 
 }
 
