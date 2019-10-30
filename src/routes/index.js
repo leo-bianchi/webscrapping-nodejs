@@ -104,23 +104,26 @@ router.get('/search', async function(req, res) {
 });
 router.post('/report', async function(req, res) {
   response.status = 200;
-  let ids = req.body.ids;
-  let promisses = [];
+  var ids = req.body.ids;
+  var promisses = [];
 
-  ids.forEach(function(id) {
-    let re = dbService.getAllFromHistoric(id);
-    promisses.push(re);
+  ids.forEach(function(id, index) {
+    var re = db_service.getAllFromHistoric(id);
+    if (index == 0)
+      promisses.push(re);
   });
 
+  response.data = [];
+
   Promise.all(promisses).then(function(respo) {
-    promisses.forEach(function(value, index) {
-      let t = respo[index].splice(respo[index][respo[index].length - 1], 1);
+    respo.forEach(function(value, index) {
+      var t = value;
       response.data.push(t[0]);
     });
+
     res.statusCode = response.status;
     res.send(response);
   });
-
 
 });
 
