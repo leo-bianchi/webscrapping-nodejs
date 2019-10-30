@@ -108,7 +108,7 @@ router.post('/report', async function(req, res) {
   var promisses = [];
 
   ids.forEach(function(id, index) {
-    var re = db_service.getAllFromHistoric(id);
+    var re = dbService.getAllFromHistoric(id);
     promisses.push(re);
   });
 
