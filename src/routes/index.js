@@ -1,3 +1,5 @@
+//jshint esversion: 9
+
 const router = require('express').Router();
 const dbService = require('../service/dbService.js');
 const response = require('../model/responseModel.js').responseModel;
@@ -28,13 +30,13 @@ router.get('/search', async function(req, res) {
         response.data = await dbService.searchPersonCPForRG(objeto);
         let keys = response.data[0].ID_PESSOA;
         let obj = {
-          Pessoa: dbService.searchPerson(keys),
-          Rg: dbService.searchRG(keys),
-          Cnh: dbService.searchCNH(keys),
-          Conta: dbService.searchConta(keys),
-          Banco: dbService.searchBanco(keys),
-          Imoveis: dbService.searchImoveis(keys),
-          Endereço: dbService.searchEndereco(keys)
+          Pessoa: await dbService.searchPerson(keys),
+          Rg: await dbService.searchRG(keys),
+          Cnh: await dbService.searchCNH(keys),
+          Conta: await dbService.searchConta(keys),
+          Banco: await dbService.searchBanco(keys),
+          Imoveis: await dbService.searchImoveis(keys),
+          Endereço: await dbService.searchEndereco(keys)
         };
         response.data = obj;
       } else if (response.data[0].PESQUISA_STATUS == "Incompleto" || response.data[0].PESQUISA_STATUS == "Falha") {
@@ -49,20 +51,20 @@ router.get('/search', async function(req, res) {
         }];
       }
     } else {
-    response.data = await dbService.searchPersonCPForRG(objeto);
+      response.data = await dbService.searchPersonCPForRG(objeto);
       if (response.data.length > 0) {
         let keys = response.data[0].ID_PESSOA;
         if (response.data[0].NOME_COMPLETO) {
           await dbService.insertHistoric("Concluido", keys, objeto.user);
           let obj = {
-            Pessoa: dbService.searchPerson(keys),
-            Rg: dbService.searchRG(keys),
-            Cnh: dbService.searchCNH(keys),
-            Conta: dbService.searchConta(keys),
-            Banco: dbService.searchBanco(keys),
-            Imoveis: dbService.searchImoveis(keys),
-            Endereço: dbService.searchEndereco(keys)
-          };
+            Pessoa: await dbService.searchPerson(key),
+            Rg: await dbService.searchRG(key),
+            Cnh: await dbService.searchCNH(key),
+            Conta: await dbService.searchConta(key),
+            Banco: await dbService.searchBanco(key),
+            Imoveis: await dbService.searchImoveis(key),
+            Endereço: await dbService.searchEndereco(key)
+          }
           response.data = obj;
         } else {
           await dbService.insertHistoric("Em Progresso", keys, objeto.user);
@@ -86,14 +88,14 @@ router.get('/search', async function(req, res) {
   } else {
 
     let obj = {
-      Pessoa: dbService.searchPerson(key),
-      Rg: dbService.searchRG(key),
-      Cnh: dbService.searchCNH(key),
-      Conta: dbService.searchConta(key),
-      Banco: dbService.searchBanco(key),
-      Imoveis: dbService.searchImoveis(key),
-      Endereço: dbService.searchEndereco(key)
-    };
+      Pessoa: await dbService.searchPerson(key),
+      Rg: await dbService.searchRG(key),
+      Cnh: await dbService.searchCNH(key),
+      Conta: await dbService.searchConta(key),
+      Banco: await dbService.searchBanco(key),
+      Imoveis: await dbService.searchImoveis(key),
+      Endereço: await dbService.searchEndereco(key)
+    }
     response.data = obj;
 
   }

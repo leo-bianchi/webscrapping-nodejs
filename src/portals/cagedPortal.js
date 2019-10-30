@@ -30,9 +30,9 @@
       await page.waitForSelector('input[type=submit]');
       await page.click('input[type=submit]');
 
-        await page.navigate('a[href="pagina3-consulta-autorizado-responsavel.html"]');
+      await page.navigate('a[href="pagina3-consulta-autorizado-responsavel.html"]');
 
-        const autorizadoresponsavel = await page.getData();
+      const autorizadoresponsavel = await page.getData();
 
       let obj = {};
 

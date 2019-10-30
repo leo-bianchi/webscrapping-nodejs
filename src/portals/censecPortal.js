@@ -11,7 +11,7 @@
    * @default
    * @type {string}
    */
-  const siel = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/censec/login.html';
+  const censec = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/censec/login.html';
 
   /**
    * @async
@@ -22,7 +22,7 @@
 
     try {
 
-      const instances = await chrome.chromeInstance(siel);
+      const instances = await chrome.chromeInstance(censec);
 
       const page = instances[0];
 
