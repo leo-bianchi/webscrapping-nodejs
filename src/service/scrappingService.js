@@ -11,17 +11,16 @@ const censecPortal = require('../portals/censecPortal.js');
 const cagedPortal = require('../portals/cagedPortal.js');
 const dbService = require('./dbService.js');
 const response = require('../model/responseModel.js').responseModel;
-const juscepPortal = require('../portals/juscepPortal.js');
 
-// (async function() {
-//   console.log(await getResult());
-// })();
-//
-// async function getResult() {
-//   let obj = await detranPortal();
-//
-//   return obj;
-// }
+/*(async function() {
+  console.log(await getResult());
+})();
+
+async function getResult() {
+  let obj = await detranPortal();
+
+  return obj;
+}*/
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
