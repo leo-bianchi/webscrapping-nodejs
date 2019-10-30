@@ -109,8 +109,7 @@ router.post('/report', async function(req, res) {
 
   ids.forEach(function(id, index) {
     var re = db_service.getAllFromHistoric(id);
-    if (index == 0)
-      promisses.push(re);
+    promisses.push(re);
   });
 
   response.data = [];
