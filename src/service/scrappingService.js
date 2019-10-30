@@ -12,7 +12,7 @@ const cagedPortal = require('../portals/cagedPortal.js');
 const dbService = require('./dbService.js');
 const response = require('../model/responseModel.js').responseModel;
 
-(async function() {
+/*(async function() {
   console.log(await getResult());
 })();
 
@@ -20,7 +20,7 @@ async function getResult() {
   let obj = await detranPortal();
 
   return obj;
-}
+}*/
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -39,11 +39,11 @@ const transporter = nodemailer.createTransport({
 async function scrapAll(parm, id) {
 
 
-  //
-  // let [sivec, cadesp, siel, detran] = await Promise.all(
-  //    [
-  //         sivecPortal(parm.rg),
-  //         cadespPortal(),
+  
+  let [sivec, cadesp, siel, detran] = await Promise.all(
+      [
+             sivecPortal(parm.rg),
+             cadespPortal(),
   //         /*sielPortal(),
   //         detranPortal(),
   //         arpenpPortal(),
