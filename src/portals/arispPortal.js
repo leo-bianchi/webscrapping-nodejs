@@ -71,6 +71,9 @@ module.exports = async function arispPortal() {
 
     await newPage.goto(newPage.url());
 
+    await page.close();
+    await newPage.close();
+
     return await pdf;
 
   } catch (error) {
@@ -81,6 +84,9 @@ module.exports = async function arispPortal() {
     }
     if (typeof page !== 'undefined') {
       page.close();
+    }
+    if (typeof newPage !== 'undefined') {
+      newPage.close();
     }
     return message;
   }
