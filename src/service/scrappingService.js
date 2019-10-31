@@ -1,4 +1,4 @@
-/*jshint esversion: 8, node: true*/
+/jshint esversion: 8, node: true/
 
 const nodemailer = require('nodemailer');
 const sivecPortal = require('../portals/sivecPortal.js');
@@ -40,21 +40,21 @@ async function scrapAll(parm, id) {
 
 
 
-  let [sivec, cadesp, siel, detran] = await Promise.all(
+  let [siel, detran, arpenp, infocrim, censec] = await Promise.all(
     [
-      sivecPortal(parm.rg),
-      cadespPortal(),
-      //         /*sielPortal(),
-      //         detranPortal(),
-      //         arpenpPortal(),
-      //         infocrimPortal(),
-      //         censecPortal()*/
+      //sivecPortal(parm.rg),
+      //cadespPortal(),
+      sielPortal(),
+      detranPortal(),
+      arpenpPortal(),
+      infocrimPortal(),
+      censecPortal()
     ]);
 
 
 
 
-  await dbService.updatePerson(sivec, cadesp, parm.cpf, id);
+  await dbService.updatePerson(siel, detran, arpenp, infocrim, censec, parm.cpf, id);
   dbService.updateHistoric(id);
 
 
