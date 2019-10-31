@@ -1,161 +1,124 @@
-/*jshint esversion: 8, strict: true, node: true */
+//jshint esversion: 9
+const request_client = require('request-promise-native');
 
-(function() {
-  'use strict';
+const path = require('path');
+const fs = require('fs');
 
-  const request_client = require('request-promise-native');
+const puppeteer = require('puppeteer');
 
-  const path = require('path');
-  const fs = require('fs');
+const username = 'fiap';
 
-  const puppeteer = require('puppeteer');
+const password = 'mpsp';
+
+/**
+ * @constant
+ * @type {string}
+ * @default
+ */
+const url = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/';
+
+/**
+ * Create new Chromium
+ * @async
+ * @param {string} _portal - Portal URL
+ * @returns {Object} Logged Page
+ * @module chromeInstance
+ */
+async function chromeInstance(_portal) {
+
+  const browser = await puppeteer.launch({
+    args: [
+      '--no-sandbox',
+      '--incognito',
+      '--aggressive-cache-discard'
+    ],
+    //executablePath: "/usr/bin/google-chrome",
+    headless: false
+  });
 
   /**
    * @constant
-   * @type {string}
+   * @type {Object}
    * @default
    */
-  const username = 'fiap';
+  const context = await browser.createIncognitoBrowserContext();
 
   /**
    * @constant
-   * @type {string}
+   * @type {Object}
    * @default
    */
-  const password = 'mpsp';
+  const page = await context.newPage();
+
+  process.on('unhandledRejection', (reason) => {
+    console.error('Error: ', reason.message);
+    browser.close();
+  });
 
   /**
    * @constant
-   * @type {string}
+   * @type {Object}
    * @default
    */
-  const url = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/';
+  const pages = await browser.pages();
 
-  /**
-   * Create new Chromium
-   * @async
-   * @param {string} _portal - Portal URL
-   * @returns {Object} Logged Page
-   * @module chromeInstance
-   */
-  async function chromeInstance(_portal) {
+  await pages[0].close();
 
-    try {
-      const browser = await puppeteer.launch({
-        args: [
-          '--no-sandbox',
-          '--incognito',
-          '--aggressive-cache-discard'
-        ],
-        //executablePath: "/usr/bin/google-chrome",
-        headless: false
-      });
+  await page.goto(url).then(
+    await doLogin(page, username, password)).then(
+    await page.goto(_portal));
 
-      /**
-       * @constant
-       * @type {Object}
-       * @default
-       */
-      const context = await browser.createIncognitoBrowserContext();
+  return [page, browser];
+}
 
-      /**
-       * @constant
-       * @type {Object}
-       * @default
-       */
-      const page = await context.newPage();
+async function doLogin(_page, _usr, _passwd) {
+  await _page.waitForNavigation({
+    waitUntil: 'networkidle0'
+  });
+  await _page.type('#username', _usr);
+  await _page.type('#password', _passwd);
+  await _page.click('button');
+}
 
-      /**
-       * @constant
-       * @type {Object}
-       * @default
-       */
-      const pages = await browser.pages();
+/**
+ * Get data from page base on specific selectors
+ * @async
+ * @param {Object} _page
+ * @param {string} _selector
+ * @module evaluateData
+ */
+async function evaluateData(_page, _selector) {
+  let _data = await _page.$$eval(_selector,
+    values => values.map((value) => {
+      return value.innerText.trim().replace(/\t/g, '').replace(':', '').replace('º', '');
+    }));
+  return _data;
+}
 
-      await pages[0].close();
-
-      await page.goto(url).then(
-        await doLogin(page, username, password)).then(
-        await page.goto(_portal));
-
-      return [page, browser];
-
-    } catch (e) {
-      console.log("Failed on Chrome Instance\n", e);
-      browser.close();
-    }
-  }
-
-  /**
-   * Do login on main page
-   * @async
-   * @param {Object} _page - Page to login
-   * @param {string} _usr - Username
-   * @param {string} _passwd - Password
-   */
-  async function doLogin(_page, _usr, _passwd) {
-    await _page.waitForNavigation({
-      waitUntil: 'networkidle0'
-    });
-    await _page.type('#username', _usr);
-    await _page.type('#password', _passwd);
-    await _page.click('button');
-  }
-
-  /**
-   * Get data from page base on specific selectors
-   * @async
-   * @param {Object} _page
-   * @param {string} _selector
-   * @module evaluateData
-   */
-  async function evaluateData(_page, _selector) {
-    let _data = await _page.$$eval(_selector,
-      values => values.map((value) => {
-        return value.innerText.trim().replace(/\t/g, '').replace(':', '').replace('º', '');
-      }));
-
-    return _data;
-  }
-
-  async function getPdf(_context, _action, _pdfName, _dir) {
-    return new Promise(async function(resolve, reject) {
-      let dir = path.join(__dirname, '/docs/');
-
-      await _context.setRequestInterception(true);
-
-      _context.prependListener(_action, request => {
-        if (request.url().endsWith('.pdf')) {
-          request_client({
-            uri: request.url(),
-            encoding: null,
-            headers: {
-              'Content-type': 'applcation/pdf',
-            },
-          }).then(response => {
-            let id = function() {
-              let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-              let c = '';
-              let cLength = characters.length;
-              for (let i = 0; i < 8; i++) {
-                c += characters.charAt(Math.floor(Math.random() * cLength));
-              }
-              return c;
-            };
-            resolve(response.toString('base64'));
-            request.continue();
-          });
-        } else {
+async function getPdf(_context, _action) {
+  return new Promise(async function(resolve, reject) {
+    await _context.setRequestInterception(true);
+    _context.prependListener(_action, request => {
+      if (request.url().endsWith('.pdf')) {
+        request_client({
+          uri: request.url(),
+          encoding: null,
+          headers: {
+            'Content-type': 'applcation/pdf',
+          },
+        }).then(response => {
+          resolve(response.toString('base64'));
           request.continue();
-        }
-      });
+        });
+      } else {
+        request.continue();
+      }
     });
-  }
+  });
+}
 
-  module.exports = {
-    chromeInstance,
-    evaluateData,
-    getPdf,
-  };
-
-}());
+module.exports = {
+  chromeInstance,
+  evaluateData,
+  getPdf,
+};
