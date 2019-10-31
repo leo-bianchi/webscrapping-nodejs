@@ -1,7 +1,3 @@
-/*jshint esversion: 9, strict: true, node: true */
-
-(function() {
-  'use strict';
   /**
    * Build Json to template
    *
@@ -12,9 +8,9 @@
   function buildJson(_data) {
     _data = Object.keys(_data).map(function(key, index) {
       let obj = {
-        'name': fixJson(key),
+        'name': fixStr(key).replace(/\uFFFD/g, ''),
         'label': key.toUpperCase(),
-        'value': _data[key],
+        'value': _data[key].replace(/\uFFFD/g, ''),
         'order': index
       };
       return obj;
@@ -28,7 +24,7 @@
    * @param {string} _str - String to be normalized
    * @returns {string} Normalized string
    */
-  function fixJson(_str) {
+  function fixStr(_str) {
     return _str.normalize('NFD')
       .replace(/\uFFFD/g, '')
       .replace(/[\u0300-\u036f]/g, '')
@@ -74,5 +70,3 @@
     toObject,
     matrixToObject,
   };
-
-}());
