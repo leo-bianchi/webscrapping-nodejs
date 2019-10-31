@@ -1,61 +1,73 @@
-/*jshint esversion: 9, node: true */
+const parse = require('../libs/parseObject.js');
+const chrome = require('../libs/getChrome.js');
 
-(function() {
-  'use strict';
+/**
+ * @constant
+ * @default
+ * @type {string}
+ */
+const arpenp = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/arpensp/login.html';
 
-  const parse = require('../libs/parseObject.js');
-  const chrome = require('../libs/getChrome.js');
+/**
+ * @async
+ * @module arpenpPortal
+ * @returns {Object}
+ */
+module.exports = async function arpenpPortal() {
 
-  /**
-   * @constant
-   * @default
-   * @type {string}
-   */
-  const arpenp = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/arpensp/pagina4-resultado.html?tipo_registro=N%2CTN&numero_processo=&vara_juiz_id=0&outra_vara=&uf=0&cidade_id=0&cartorio_id=0&flag_conjuge=TD&nome_registrado=&cpf_registrado=&nome_pai=&nome_mae=&data_ocorrido_ini=&data_ocorrido_fim=&data_registro_ini=&data_registro_fim=&num_livro=&num_folha=&num_registro=&btn_pesquisar=Pesquisar';
+  const instances = await chrome.chromeInstance(arpenp);
 
-  /**
-   * @async
-   * @module cadespPortal
-   * @returns {Object}
-   */
-  module.exports = async function arpenpPortal() {
+  const page = instances[0];
 
-    try {
+  try {
 
-      const instances = await chrome.chromeInstance(arpenp);
+    await page.waitForSelector('a[href="pagina2-pesquisa.html"]');
+    await page.click('a[href="pagina2-pesquisa.html"]');
 
-      const page = instances[0];
+    await page.waitForSelector('li.item3 > a > #arrumaMenu');
+    await page.click('li.item3 > a > #arrumaMenu');
 
-      await page.waitForSelector('table');
+    await page.waitForSelector('li.subitem1 > a[href="pagina3-busca.html"]');
+    await page.$eval('li.subitem1 > a[href="pagina3-busca.html"]', elem => elem.click());
 
-      const data = await chrome.evaluateData(page, 'table tbody tr td');
+    await page.waitForSelector('#btn_pesquisar');
+    await page.click('#btn_pesquisar');
 
-      for (let i = 0; i <= data.length; i++) {
-        if (data[i] == '' && data[i + 1] == '') {
-          data.splice(i, 1);
-        }
-      }
+    await page.waitForSelector('table');
 
-      const newData = await data.slice(0, -4);
+    const data = await chrome.evaluateData(page, 'table tbody tr td');
 
-      await newData.splice(newData.indexOf('CASAMENTO RELIGIOSO'), 1);
+    await page.close();
 
-      await newData.splice(6, 1);
-
-      await newData.splice(17, 1);
-
-      const obj = parse.toObject(newData);
-
-      await page.close();
-
-      return obj;
-
-    } catch (error) {
-      console.log('Portal Arpenp =>', error);
-      if (typeof page !== 'undefined') {
-        page.close();
+    for (let i = 0; i <= data.length; i++) {
+      if (data[i] == '' && data[i + 1] == '') {
+        data.splice(i, 1);
       }
     }
-  };
 
-}());
+    const newData = data.slice(0, -4);
+
+    newData.splice(newData.indexOf('CASAMENTO RELIGIOSO') - 1, 2);
+
+    newData.splice(16, 1);
+
+    for (let i in newData) {
+      console.log(i, newData[i]);
+    }
+
+    const obj = parse.toObject(newData);
+
+    return obj;
+
+  }  catch (error) {
+    console.log('Portal Arpenp =>', error);
+    const message = {
+      status: 500,
+      error: error.message
+    }
+    if (typeof page !== 'undefined') {
+      page.close();
+    }
+    return obj;
+  }
+};

@@ -1,62 +1,60 @@
-/*jshint esversion: 9, strict: true, node: true */
+const parse = require('../libs/parseObject.js');
+const chrome = require('../libs/getChrome.js');
 
-(function() {
-  'use strict';
+/**
+ * @constant
+ * @default
+ * @type {string}
+ */
+const siel = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/siel/login.html';
 
-  const parse = require('../libs/parseObject.js');
-  const chrome = require('../libs/getChrome.js');
+/**
+ * @async
+ * @module sivecPortal
+ * @returns {Object}
+ */
+module.exports = async function sielPortal() {
 
-  /**
-   * @constant
-   * @default
-   * @type {string}
-   */
-  const siel = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/siel/login.html';
+  const instances = await chrome.chromeInstance(siel);
 
-  /**
-   * @async
-   * @module sivecPortal
-   * @returns {Object}
-   */
-  module.exports = async function sielPortal() {
+  const page = instances[0];
 
-    try {
+  try {
 
-      const instances = await chrome.chromeInstance(siel);
+    await page.waitForSelector('input[type=submit]');
 
-      const page = instances[0];
+    await page.click('input[type=submit]');
 
-      await page.waitForSelector('input[type=submit]');
+    await page.waitForSelector('input[type=image]');
 
-      await page.click('input[type=submit]');
+    await page.$eval('input[name=nome]', el => el.value = 'teste');
 
-      await page.waitForSelector('input[type=image]');
-      // isto tem que ser alterado para o input do usuário no form.
-      await page.$eval('input[name=nome]', el => el.value = 'teste');
+    await page.$eval('#num_processo', el => el.value = '123');
 
-      await page.$eval('#num_processo', el => el.value = '123');
+    await page.click('input[type=image]');
 
-      await page.click('input[type=image]');
+    await page.waitForSelector('table.lista tbody tr td');
 
-      await page.waitForSelector('table.lista tbody tr td');
+    const data = await chrome
+      .evaluateData(page, 'table tr td');
 
-      const data = await chrome
-        .evaluateData(page, 'table tr td');
+    await page.close();
 
-      await data.splice(0, 2);
+    await data.splice(0, 2);
 
-      const obj = await parse.toObject(data);
+    const obj = await parse.toObject(data);
 
-      await page.close();
+    return obj;
 
-      return obj;
-
-    } catch (error) {
-      console.log('Portal Siel =>', error);
-      if (typeof page !== 'undefined') {
-        page.close();
-      }
+  } catch (error) {
+    console.log('Portal Arpenp =>', error);
+    const message = {
+      status: 500,
+      error: error.message
     }
-  };
-
-}());
+    if (typeof page !== 'undefined') {
+      page.close();
+    }
+    return obj;
+  }
+};

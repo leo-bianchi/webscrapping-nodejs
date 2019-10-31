@@ -1,81 +1,79 @@
-/*jshint esversion: 9, node: true */
+const parse = require('../libs/parseObject.js');
+const chrome = require('../libs/getChrome.js');
 
-(function() {
-  'use strict';
+/**
+ * @constant
+ * @default
+ * @type {string}
+ */
+const infocrim = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/infocrim/login.html';
 
-  const parse = require('../libs/parseObject.js');
-  const chrome = require('../libs/getChrome.js');
+/**
+ * @async
+ * @module cadespPortal
+ * @returns {Object}
+ */
+module.exports = async function infocrimPortal() {
 
-  /**
-   * @constant
-   * @default
-   * @type {string}
-   */
-  const infocrim = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/infocrim/login.html';
+  const instances = await chrome.chromeInstance(infocrim);
 
-  /**
-   * @async
-   * @module cadespPortal
-   * @returns {Object}
-   */
-  module.exports = async function infocrimPortal() {
+  const page = instances[0];
 
-    try {
+  try {
 
-      const instances = await chrome.chromeInstance(infocrim);
+    await page.waitForSelector('a[href="pagina2-pesquisa.html"]');
+    await page.click('a[href="pagina2-pesquisa.html"]');
 
-      const page = instances[0];
+    await page.waitForSelector('a#submit');
+    await page.click('a#submit');
 
-      await page.waitForSelector('a[href="pagina2-pesquisa.html"]');
-      await page.click('a[href="pagina2-pesquisa.html"]');
+    await page.waitForSelector('a[href="pagina4-detalhes-bo.html"]');
+    await page.click('a[href="pagina4-detalhes-bo.html"]');
 
-      await page.waitForSelector('a#submit');
-      await page.click('a#submit');
+    await page.waitForSelector('pre');
 
-      await page.waitForSelector('a[href="pagina4-detalhes-bo.html"]');
-      await page.click('a[href="pagina4-detalhes-bo.html"]');
+    let data = await page.$eval('pre', el => el.innerText);
 
-      await page.waitForSelector('pre');
+    await page.close();
 
-      let data = await page.$eval('pre', el => el.innerText);
+    data = await data.replace(/\t/g, '');
 
-      data = await data.replace(/\t/g, '');
+    let array = data.split(': ');
 
-      let array = data.split(': ');
+    const p = [];
 
-      let p = [];
-
-      for (let entry of array) {
-        array = entry.split(/\n/g);
-        for (let a of array) {
-          a = a.trim();
-          let hora = a.replace(/HORA/g, "@@@.HORA");
-          let newHora = hora.split("@@@.");
-          for (let n of newHora) {
-            n = n.trim();
-            p.push(n);
-          }
+    for (let entry of array) {
+      array = entry.split(/\n/g);
+      for (let a of array) {
+        a = a.trim();
+        let hora = a.replace(/HORA/g, "@@@.HORA");
+        let newHora = hora.split("@@@.");
+        for (let n of newHora) {
+          n = n.trim();
+          p.push(n);
         }
       }
-
-      await p.verify();
-      await p.fix();
-
-      const obj = parse.toObject(p);
-
-      await page.close();
-
-      return obj;
-
-    } catch (error) {
-      console.log('Portal Infocrim =>', error);
-      if (typeof page !== 'undefined') {
-        page.close();
-      }
     }
-  };
 
-}());
+    await p.verify();
+    await p.fix();
+
+    const obj = parse.toObject(p);
+
+    return obj;
+
+  } catch (error) {
+    console.log('Portal Arpenp =>', error);
+    const message = {
+      status: 500,
+      error: error.message
+    }
+    if (typeof page !== 'undefined') {
+      page.close();
+    }
+    return obj;
+  }
+};
 
 Array.prototype.verify = function() {
   for (let i = 0; i < this.length; i++) {

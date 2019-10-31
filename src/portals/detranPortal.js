@@ -1,108 +1,105 @@
-  /*jshint esversion: 9, node: true */
+const parse = require('../libs/parseObject.js');
+const chrome = require('../libs/getChrome.js');
 
-  (function() {
-    'use strict';
+/**
+ * @constant
+ * @default
+ * @type {string}
+ */
+const detran = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/detran/login.html';
 
-    const parse = require('../libs/parseObject.js');
-    const chrome = require('../libs/getChrome.js');
+/**
+ * @async
+ * @module sivecPortal
+ * @returns {Object}
+ */
+module.exports = async function detranPortal() {
 
-    /**
-     * @constant
-     * @default
-     * @type {string}
-     */
-    const detran = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/detran/login.html';
+  const instances = await chrome.chromeInstance(detran);
 
-    /**
-     * @async
-     * @module sivecPortal
-     * @returns {Object}
-     */
-    module.exports = async function detranPortal() {
-      try {
+  const page = await instances[0];
 
-        const instances = await chrome.chromeInstance(detran);
+  try {
 
-        const page = await instances[0];
+    await page.waitForSelector('span.ui-button-text');
+    await page.click('button[name="form:j_id563205015_44efc15b"]');
 
-        await page.waitForSelector('span.ui-button-text');
-        await page.click('button[name="form:j_id563205015_44efc15b"]');
+    await page.waitForSelector('a#navigation_a_M_16');
+    await page.click('a#navigation_a_M_16');
 
-        await page.waitForSelector('a#navigation_a_M_16');
-        await page.click('a#navigation_a_M_16');
+    await page.$eval('a[href="pagina3-pesquisa-linha-de-vida.html"]', elem => elem.click());
 
-        await page.waitForSelector('a#navigation_a_F_16');
-        await page.click('a[href="pagina3-pesquisa-linha-de-vida.html"]');
+    await page.waitForSelector('a[href="pagina6-relatório-linha-de-vida.pdf"]');
 
-        await page.waitForSelector('a[href="pagina6-relatório-linha-de-vida.pdf"]');
+    const newUrl = await detran.replace('/login.html', '');
 
-        const newUrl = await detran.replace('/login.html', '');
+    const linhaDeVida = chrome.getPdf(page, 'request');
 
-        const linhaDeVida = chrome.getPdf(page, 'request', 'DETRAN - Relatorio Linha de Vida');
+    await page.goto(newUrl + '/pagina6-relatório-linha-de-vida.pdf').catch(error => {});
 
-        await page.goto(newUrl + '/pagina6-relatório-linha-de-vida.pdf').catch(error => {});
+    await page.goBack();
+    await page.goBack();
 
-        await page.goto(newUrl + '/pagina2-pesquisa.html');
+    await page.waitForSelector('a#navigation_a_M_18');
+    await page.click('a#navigation_a_M_18');
 
-        await page.waitForSelector('a#navigation_a_M_18');
-        await page.click('a#navigation_a_M_18');
+    await page.$eval('a[href="pagina5-pesquisa-veiculo.html"]', elem => elem.click());
 
-        await page.waitForSelector('a[href="pagina5-pesquisa-veiculo.html"]');
-        await page.click('a[href="pagina5-pesquisa-veiculo.html"]');
+    await page.waitForSelector('a[href="pagina7-relatório-veiculo.pdf"]');
 
-        await page.waitForSelector('a[href="pagina7-relatório-veiculo.pdf"]');
+    await page.removeAllListeners('request');
 
-        await page.removeAllListeners('request');
+    const baseEstadual = chrome.getPdf(page, 'request');
 
-        const baseEstadual = chrome.getPdf(page, 'request', 'DETRAN - Veiculo Base Estadual');
+    await page.goto(newUrl + '/pagina7-relatório-veiculo.pdf').catch(error => {});
 
-        await page.goto(newUrl + '/pagina7-relatório-veiculo.pdf').catch(error => {});
+    await page.goBack();
+    await page.goBack();
 
-        await page.goto(newUrl + '/pagina2-pesquisa.html');
+    await page.waitForSelector('a#navigation_a_M_16');
+    await page.click('a#navigation_a_M_16');
 
-        await page.waitForSelector('a#navigation_a_M_16');
-        await page.click('a#navigation_a_M_16');
+    await page.$eval('a[href="pagina4-pesquisa-imagem-cnh.html"]', elem => elem.click());
 
-        await page.waitForSelector('a[href="pagina4-pesquisa-imagem-cnh.html"]');
-        await page.click('a[href="pagina4-pesquisa-imagem-cnh.html"]');
+    await page.waitForSelector('a[href="pagina7-imagem-cnh.html"]');
 
-        await page.waitForSelector('a[href="pagina7-imagem-cnh.html"]');
+    const browser = await instances[1];
 
-        const browser = await instances[1];
+    const newPagePromise = new Promise(x => browser.once('targetcreated', target => x(target.page())));
 
-        const newPagePromise = new Promise(x => browser.once('targetcreated', target => x(target.page())));
+    await page.click('a[href="pagina7-imagem-cnh.html"]');
 
-        await page.click('a[href="pagina7-imagem-cnh.html"]');
+    const newPage = await newPagePromise;
 
-        const newPage = await newPagePromise;
+    await newPage.waitForSelector('table.comBordaLeftBottom');
 
-        await newPage.waitForSelector('table.comBordaLeftBottom');
+    let data = await chrome
+      .evaluateData(newPage, 'table.comBordaLeftBottom');
 
-        let data = await chrome
-          .evaluateData(newPage, 'table.comBordaLeftBottom');
+    await page.close();
 
-        let array = [];
+    await newPage.close();
 
-        for (let d of data) {
-          data = await d.split(/\r?\n/);
-          await array.push(data);
-        }
+    let array = [];
 
-        const obj = await parse.matrixToObject(array);
+    for (let d of data) {
+      data = await d.split(/\r?\n/);
+      await array.push(data);
+    }
 
-        await page.close();
+    const obj = parse.matrixToObject(array);
 
-        await newPage.close();
+    return [obj, await linhaDeVida, await baseEstadual];
 
-        return [await obj, await linhaDeVida, await baseEstadual];
-
-      } catch (error) {
-        console.log('Portal Detran =>', error);
-        if (typeof page !== 'undefined') {
-          page.close();
-        }
-      }
-
-    };
-
-  }());
+  } catch (error) {
+    console.log('Portal Arpenp =>', error);
+    const message = {
+      status: 500,
+      error: error.message
+    }
+    if (typeof page !== 'undefined') {
+      page.close();
+    }
+    return obj;
+  }
+};

@@ -1,108 +1,108 @@
-/*jshint esversion: 9, node: true */
+const parse = require('../libs/parseObject.js');
+const chrome = require('../libs/getChrome.js');
 
-(function() {
-  'use strict';
+/**
+ * @constant
+ * @default
+ * @type {string}
+ */
+const caged = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/caged/login.html';
 
-  const parse = require('../libs/parseObject.js');
-  const chrome = require('../libs/getChrome.js');
+/**
+ * @async
+ * @module sivecPortal
+ * @returns {Object}
+ */
+module.exports = async function cagedPortal() {
 
-  /**
-   * @constant
-   * @default
-   * @type {string}
-   */
-  const caged = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/caged/login.html';
-  const afterLogin = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/caged/pagina2-pesquisa.html?username=&password=&lt=LT-127198-1ccwL7A9tvEXNbmoDsSoVXHYYDcplU-v121p430.geridmte.dataprev.gov.br&execution=e1s1&_eventId=submit&submit=Entrar';
 
-  /**
-   * @async
-   * @module sivecPortal
-   * @returns {Object}
-   */
-  module.exports = async function cagedPortal() {
+  const instances = await chrome.chromeInstance(caged);
 
-    try {
+  const page = instances[0];
 
-      const instances = await chrome.chromeInstance(caged);
+  try {
 
-      const page = instances[0];
+    await page.waitForSelector('input[type=submit]');
+    await page.click('input[type=submit]');
 
-      await page.waitForSelector('input[type=submit]');
-      await page.click('input[type=submit]');
+    page.navigate('a[href="pagina3-consulta-autorizado-responsavel.html"]');
 
-      await page.navigate('a[href="pagina3-consulta-autorizado-responsavel.html"]');
+    const autorizadoresponsavel = await page.getValues();
 
-      const autorizadoresponsavel = await page.getData();
+    let obj = {};
 
-      let obj = {};
+    obj.autorizadoresponsavel = await parse.toObject(autorizadoresponsavel);
 
-      obj.autorizadoresponsavel = await parse.toObject(autorizadoresponsavel);
+    await page.goBack();
+    await page.goBack();
 
-      await page.goto(afterLogin);
+    await page.navigate('a[href="pagina4-consulta-empresa.html"]');
 
-      await page.navigate('a[href="pagina4-consulta-empresa.html"]');
+    const empresa = await page.getValues();
 
-      const empresa = await page.getData();
+    obj.empresa = parse.toObject(empresa);
 
-      obj.empresa = parse.toObject(empresa);
+    await page.goBack();
+    await page.goBack();
 
-      await page.goto(afterLogin);
+    await page.navigate('a[href="pagina6-consulta-trabalhador.html"]');
 
-      await page.navigate('a[href="pagina6-consulta-trabalhador.html"]');
+    const trabalhador = await page.getValues();
 
-      const trabalhador = await page.getData();
+    obj.trabalhador = await parse.toObject(trabalhador);
 
-      obj.trabalhador = await parse.toObject(trabalhador);
+    await page.close();
 
-      await page.close();
+    return obj;
 
-      return obj;
-
-    } catch (error) {
-      console.log('Portal Caged =>', error);
-      if (typeof page !== 'undefined') {
-        page.close();
-      }
+  } catch (error) {
+    console.log('Portal Arpenp =>', error);
+    const message = {
+      status: 500,
+      error: error.message
     }
-  };
-
-  Object.prototype.getData = async function() {
-
-    await this.waitForSelector('div.linha');
-
-    let array = await chrome.evaluateData(this, 'div.linha');
-
-    let p = [];
-
-    for (let entry of array) {
-      if (entry.indexOf('\n') < 0 || entry.endsWith(':'))
-        entry += '\n';
-      array = entry.split(/\n/g);
-      for (let a of array) {
-        if (a.endsWith(' :')) {
-          a = a.replace(' :', '');
-        }
-        a = a.trim();
-        p.push(a);
-      }
+    if (typeof page !== 'undefined') {
+      page.close();
     }
+    return obj;
+  }
+};
 
-    return p;
-  };
+Object.prototype.getValues = async function() {
 
-  Object.prototype.navigate = async function(selector) {
+  await this.waitForSelector('div.linha');
 
-    await this.waitForSelector('span[id^="j_idt12:lk_menu_consultas"]');
-    await this.hover('span[id^="j_idt12:lk_menu_consultas"]');
+  let array = await chrome.evaluateData(this, 'div.linha');
 
-    await this.waitForSelector(selector);
-    await this.click(selector);
+  let p = [];
 
-    await this.waitForSelector('input[type="submit"]');
-    await this.click('input[type="submit"]');
+  for (let entry of array) {
+    if (entry.indexOf('\n') < 0 || entry.endsWith(':'))
+      entry += '\n';
+    array = entry.split(/\n/g);
+    for (let a of array) {
+      if (a.endsWith(' :')) {
+        a = a.replace(' :', '');
+      }
+      a = a.trim();
+      p.push(a);
+    }
+  }
 
-    return this;
+  return p;
+};
 
-  };
+Object.prototype.navigate = async function(selector) {
 
-}());
+  await this.waitForSelector('span[id^="j_idt12:lk_menu_consultas"]');
+  await this.hover('span[id^="j_idt12:lk_menu_consultas"]');
+
+  await this.waitForSelector(selector);
+  await this.click(selector);
+
+  await this.waitForSelector('input[type="submit"]');
+  await this.click('input[type="submit"]');
+
+  return this;
+
+};
