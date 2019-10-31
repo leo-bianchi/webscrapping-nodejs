@@ -9,10 +9,10 @@ router.get('/search', async function(req, res) {
   response.status = 200;
 
   let objeto = {
-    user: req.query.user,
-    key: req.query.key,
-    cpf: req.query.cpf,
-    rg: req.query.rg
+    user: req.query.user || null,
+    key: req.query.key || null,
+    cpf: req.query.cpf || null,
+    rg: req.query.rg || null
   };
   let type = req.query.type;
   let key = objeto.key;
@@ -75,6 +75,9 @@ router.get('/search', async function(req, res) {
       } else {
         response.data = await dbService.insertPerson(objeto.cpf);
         let id = response.data.insertId;
+
+        if (objeto.rg)
+          await dbService.insertPersonRG(id, objeto.rg);
 
         await dbService.insertHistoric("Em Progresso", id, objeto.user);
         scrapping.scrapAll(objeto, id);
