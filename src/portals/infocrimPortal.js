@@ -71,7 +71,7 @@ module.exports = async function infocrimPortal() {
     if (typeof page !== 'undefined') {
       page.close();
     }
-    return obj;
+    return message;
   }
 };
 

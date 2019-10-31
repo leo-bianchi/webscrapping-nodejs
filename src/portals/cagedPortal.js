@@ -64,7 +64,7 @@ module.exports = async function cagedPortal() {
     if (typeof page !== 'undefined') {
       page.close();
     }
-    return obj;
+    return message;
   }
 };
 

@@ -51,10 +51,6 @@ module.exports = async function arpenpPortal() {
 
     newData.splice(16, 1);
 
-    for (let i in newData) {
-      console.log(i, newData[i]);
-    }
-
     const obj = parse.toObject(newData);
 
     return obj;
@@ -68,6 +64,6 @@ module.exports = async function arpenpPortal() {
     if (typeof page !== 'undefined') {
       page.close();
     }
-    return obj;
+    return message;
   }
 };

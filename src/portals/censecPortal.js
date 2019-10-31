@@ -220,6 +220,6 @@ module.exports = async function censecPortal() {
     if (typeof page !== 'undefined') {
       page.close();
     }
-    return obj;
+    return message;
   }
 };

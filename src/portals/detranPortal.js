@@ -100,6 +100,6 @@ module.exports = async function detranPortal() {
     if (typeof page !== 'undefined') {
       page.close();
     }
-    return obj;
+    return message;
   }
 };

@@ -64,6 +64,6 @@ module.exports = async function sivecPortal(rg) {
     if (typeof page !== 'undefined') {
       page.close();
     }
-    return obj;
+    return message;
   }
 };

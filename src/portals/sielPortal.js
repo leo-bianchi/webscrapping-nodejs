@@ -55,6 +55,6 @@ module.exports = async function sielPortal() {
     if (typeof page !== 'undefined') {
       page.close();
     }
-    return obj;
+    return message;
   }
 };

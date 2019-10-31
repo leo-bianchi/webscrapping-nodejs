@@ -46,7 +46,7 @@ module.exports = async function jucespPortal() {
     if (typeof page !== 'undefined') {
       page.close();
     }
-    return obj;
+    return message;
   }
 };
 
