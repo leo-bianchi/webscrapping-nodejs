@@ -1,4 +1,4 @@
 module.exports.responseModel = {
-    status: 404,
-    data: []
+  status: 404,
+  data: []
 };
