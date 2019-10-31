@@ -32,7 +32,6 @@ async function chromeInstance(_portal) {
       '--incognito',
       '--aggressive-cache-discard'
     ],
-    //executablePath: "/usr/bin/google-chrome",
     headless: false
   });
 
@@ -99,7 +98,7 @@ async function getPdf(_context, _action) {
   return new Promise(async function(resolve, reject) {
     await _context.setRequestInterception(true);
     _context.prependListener(_action, request => {
-      if (request.url().endsWith('.pdf')) {
+      if (request.url().endsWith('.pdf') || request.url().endsWith('pagina10-visualizar-matriculas.htm')) {
         request_client({
           uri: request.url(),
           encoding: null,
