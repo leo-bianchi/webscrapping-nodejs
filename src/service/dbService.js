@@ -1,3 +1,5 @@
+/jshint esversion: 8, node: true/
+
 const db = require("../libs/conn.js");
 
 function selectHistoric(parm) {
@@ -169,12 +171,79 @@ function updateHistoric(id) {
   });
 }
 
-function updatePerson(siel, detran, cpf, id) {
+function updatePerson(sivec, siel, detran, arpenp, cpf, id) {
+
+  let aux = sivec[2].value.split('/');
+  let data = aux[2] + "-" + aux[1] + "-" + aux[0];
+  aux = sivec[10].value;
+
+  let naturalizado;
+  if (aux == "Sim") {
+    naturalizado = true;
+  } else {
+    naturalizado = false;
+  }
+  /*
+   let aux2 = cadesp[3].value.split(/(\d)/);
+   let data2 = aux2[9]+aux2[11]+aux2[13]+aux2[15]+"-"+aux2[5]+aux2[7]+"-"+aux2[1]+aux2[3];
+   */
+  let aux3 = siel[2].value.split('/');
+  let data3 = aux3[2] + "-" + aux3[1] + "-" + aux3[0];
+
+  let aux4 = siel[7].value.split('/');
+  let data4 = aux4[2] + "-" + aux4[1] + "-" + aux4[0];
+
+
   return new Promise(function(resolve) {
     let response = [];
+
+    db.insert("insert into tb_cnh (id_cnh_pessoa, pdf_detran) values (" + id + ", '" + detran[1] + "')", function(rows) {
+      response += rows;
+    });
+
+    db.insert("CALL PF_EnderecoPUT ('" + cpf + "', '" + siel[1].value + "', '" + siel[0].value + "', '" + data3 + "', '" + siel[8].value + "', '" + siel[9].value + "', '" + siel[10].value + "', '" + siel[11].value + "', '" + siel[4].value + "', '" + siel[6].value + "', '" + data4 + "')", function(rows) {
+      response += rows;
+    });
+
+
+
+    db.insert("CALL PessoaFisicaPOST('" + sivec[0].value + "','" + sivec[1].value + "','" + data + "',NULL,'" + sivec[9].value + "'," + naturalizado + ",'" + cpf + "',NULL,'" + sivec[8].value + "','" + sivec[12].value + "','" + sivec[13].value + "','" + sivec[14].value + "','" + sivec[16].value + "','" + sivec[15].value + "','" + sivec[17].value + "','" + sivec[18].value + "','" + sivec[19].value + "',FALSE,FALSE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL," + id + ")", function(rows) {
+      response += rows;
+    });
+    /*
+    db.insert("INSERT INTO TB_CNPJ(CNPJ,IE,SITUACAO,DATA_INSCRICAO_ESTADO,NOME_EMPRESARIAL,REGIME_ESTADUAL,DRT,POSTO_FISCAL) VALUES('"+cadesp[2].value+"','"+cadesp[0].value+"', '"+cadesp[1].value+"', '"+data2+"', '"+cadesp[4].value+"','"+cadesp[5].value+"', '"+cadesp[6].value+"', '"+cadesp[7].value+"')", function(rows){
+        response += rows;
+    });
+    */
     resolve(response);
   });
+}
 
+function updatePersonNRG(siel, detran, arpenp, cpf, id) {
+  let aux3 = siel[2].value.split('/');
+  let data3 = aux3[2] + "-" + aux3[1] + "-" + aux3[0];
+
+  let aux4 = siel[7].value.split('/');
+  let data4 = aux4[2] + "-" + aux4[1] + "-" + aux4[0];
+
+
+  return new Promise(function(resolve) {
+    let response = [];
+
+    db.insert("insert into tb_cnh (id_cnh_pessoa, pdf_detran) values (" + id + ", '" + detran[1] + "')", function(rows) {
+      response += rows;
+    });
+
+    db.insert("CALL PF_EnderecoPUT ('" + cpf + "', '" + siel[1].value + "', '" + siel[0].value + "', '" + data3 + "', '" + siel[8].value + "', '" + siel[9].value + "', '" + siel[10].value + "', '" + siel[11].value + "', '" + siel[4].value + "', '" + siel[6].value + "', '" + data4 + "')", function(rows) {
+      response += rows;
+    });
+    /*
+    db.insert("INSERT INTO TB_CNPJ(CNPJ,IE,SITUACAO,DATA_INSCRICAO_ESTADO,NOME_EMPRESARIAL,REGIME_ESTADUAL,DRT,POSTO_FISCAL) VALUES('"+cadesp[2].value+"','"+cadesp[0].value+"', '"+cadesp[1].value+"', '"+data2+"', '"+cadesp[4].value+"','"+cadesp[5].value+"', '"+cadesp[6].value+"', '"+cadesp[7].value+"')", function(rows){
+        response += rows;
+    });
+    */
+    resolve(response);
+  });
 }
 
 function validateLogin(user) {
@@ -210,7 +279,7 @@ function insertPersonRG(id, rg) {
   });
 }
 
-function createHistoricQuery(parm) {
+function createHistoricQuery(parm) { //nao precisa mapear no modules
   var query = "SELECT P.ID_PESSOA, NOME_COMPLETO, CPF, PESQUISA_STATUS FROM tb_historicos h JOIN tb_pessoa_fisica p ON (h.id_pessoa = p.id_pessoa)";
 
   if (parm.rg)
@@ -238,6 +307,8 @@ function createHistoricQuery(parm) {
 
 }
 
+
+
 module.exports = {
   selectHistoric: selectHistoric,
   searchPerson: searchPerson,
@@ -257,5 +328,6 @@ module.exports = {
   validateLogin: validateLogin,
   getFields: getFields,
   searchUser: searchUser,
-  insertPersonRG: insertPersonRG
+  insertPersonRG: insertPersonRG,
+  updatePersonNRG: updatePersonNRG
 };

@@ -1,26 +1,18 @@
 /jshint esversion: 8, node: true/
 
 const nodemailer = require('nodemailer');
-const sivecPortal = require('../portals/sivecPortal.js');
-const sielPortal = require('../portals/sielPortal.js');
-const cadespPortal = require('../portals/cadespPortal.js');
-const detranPortal = require('../portals/detranPortal.js');
+const arispPortal = require('../portals/arispPortal.js');
 const arpenpPortal = require('../portals/arpenpPortal.js');
-const infocrimPortal = require('../portals/infocrimPortal.js');
-const censecPortal = require('../portals/censecPortal.js');
+const cadespPortal = require('../portals/cadespPortal.js');
 const cagedPortal = require('../portals/cagedPortal.js');
+const censecPortal = require('../portals/censecPortal.js');
+const detranPortal = require('../portals/detranPortal.js');
+const infocrimPortal = require('../portals/infocrimPortal.js');
+const jucespPortal = require('../portals/jucespPortal.js');
+const sielPortal = require('../portals/sielPortal.js');
+const sivecPortal = require('../portals/sivecPortal.js');
 const dbService = require('./dbService.js');
 const response = require('../model/responseModel.js').responseModel;
-
-/*(async function() {
-  console.log(await getResult());
-})();
-
-async function getResult() {
-  let obj = await detranPortal();
-
-  return obj;
-}*/
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -38,23 +30,26 @@ const transporter = nodemailer.createTransport({
 
 async function scrapAll(parm, id) {
 
-
-
-  let [siel, detran, arpenp, infocrim, censec] = await Promise.all(
+  let [sivec, siel, detran, arpenp, infocrim, censec] = await Promise.all(
     [
-      //sivecPortal(parm.rg),
+
+      sivecPortal(parm.rg),
       //cadespPortal(),
       sielPortal(),
       detranPortal(),
       arpenpPortal(),
-      infocrimPortal(),
-      censecPortal()
+      //infocrimPortal(),
+      //censecPortal(),
+
     ]);
 
 
+  if (parm.rg) {
+    await dbService.updatePerson(sivec, siel, detran, arpenp, parm.cpf, id);
+  } else {
+    await dbService.updatePersonNRG(siel, detran, arpenp, parm.cpf, id);
+  }
 
-
-  await dbService.updatePerson(siel, detran, arpenp, infocrim, censec, parm.cpf, id);
   dbService.updateHistoric(id);
 
 
