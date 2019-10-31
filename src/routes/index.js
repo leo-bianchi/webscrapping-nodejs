@@ -57,13 +57,13 @@ router.get('/search', async function(req, res) {
         if (response.data[0].NOME_COMPLETO) {
           await dbService.insertHistoric("Concluido", keys, objeto.user);
           let obj = {
-            Pessoa: await dbService.searchPerson(key),
-            Rg: await dbService.searchRG(key),
-            Cnh: await dbService.searchCNH(key),
-            Conta: await dbService.searchConta(key),
-            Banco: await dbService.searchBanco(key),
-            Imoveis: await dbService.searchImoveis(key),
-            Endereço: await dbService.searchEndereco(key)
+            Pessoa: await dbService.searchPerson(keys),
+            Rg: await dbService.searchRG(keys),
+            Cnh: await dbService.searchCNH(keys),
+            Conta: await dbService.searchConta(keys),
+            Banco: await dbService.searchBanco(keys),
+            Imoveis: await dbService.searchImoveis(keys),
+            Endereço: await dbService.searchEndereco(keys)
           }
           response.data = obj;
         } else {

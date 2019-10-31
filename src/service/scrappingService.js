@@ -30,7 +30,7 @@ const transporter = nodemailer.createTransport({
 
 async function scrapAll(parm, id) {
 
-  let [sivec, siel, detran, arpenp, infocrim, censec] = await Promise.all(
+  let [sivec, siel, detran, arpenp, infocrim, censec, arisp, caged, jucesp] = await Promise.all(
     [
 
       sivecPortal(parm.rg),
@@ -38,9 +38,11 @@ async function scrapAll(parm, id) {
       sielPortal(),
       detranPortal(),
       arpenpPortal(),
-      //infocrimPortal(),
-      //censecPortal(),
-
+      infocrimPortal(),
+      censecPortal(),
+      arispPortal(),
+      cagedPortal(),
+      jucespPortal()
     ]);
 
 
