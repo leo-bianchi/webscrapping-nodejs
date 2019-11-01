@@ -48,11 +48,15 @@ module.exports = async function arispPortal() {
     await page.waitForSelector('#btnPesquisar');
     await page.click('#btnPesquisar');
 
-    await page.waitForSelector('body');
+    //await page.waitForSelector('body');
+    await page.waitForSelector('#chk339');
 
     await page.$eval('#chk339', elem => elem.click());
+    await page.waitForSelector('#chk7');
     await page.$eval('#chk7', elem => elem.click());
+    await page.waitForSelector('#chk10');
     await page.$eval('#chk10', elem => elem.click());
+    await page.waitForSelector('#chk18');
     await page.$eval('#chk18', elem => elem.click());
 
     await page.click('#btnProsseguir');
@@ -64,8 +68,6 @@ module.exports = async function arispPortal() {
 
     const newPage = await newPagePromise;
 
-    console.log(await newPage.url())
-    console.log(await page.url())
 
     const pdf = chrome.getPdf(newPage, 'request');
 

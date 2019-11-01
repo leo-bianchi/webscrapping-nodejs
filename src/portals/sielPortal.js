@@ -47,7 +47,7 @@ module.exports = async function sielPortal() {
     return obj;
 
   } catch (error) {
-    console.log('Portal Arpenp =>', error);
+    console.log('Portal Siel =>', error);
     const message = {
       status: 500,
       error: error.message

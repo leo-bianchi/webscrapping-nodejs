@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true, // true for 465, false for other ports
   auth: {
-    user: 'gbmadeira27@gmail.com',
+    user: 'gabriel.madeira@alparservice.com.br',
     pass: 'joao2000'
   },
   tls: {
@@ -58,7 +58,7 @@ async function scrapAll(parm, id) {
   response.data = await dbService.searchUser(parm.user);
 
   const mailOptions = {
-    from: 'gbmadeira27@gmail.com',
+    from: 'gabriel.madeira@alparservice.com.br',
     to: response.data[0].EMAIL,
     subject: 'Sua consulta foi concluída',
     text: 'Sua consulta ao cpf ' + parm.cpf + ' foi concluida e está disponivel no portal'

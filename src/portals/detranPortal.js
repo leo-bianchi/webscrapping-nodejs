@@ -92,7 +92,7 @@ module.exports = async function detranPortal() {
     return [obj, await linhaDeVida, await baseEstadual];
 
   } catch (error) {
-    console.log('Portal Arpenp =>', error);
+    console.log('Portal Detran =>', error);
     const message = {
       status: 500,
       error: error.message

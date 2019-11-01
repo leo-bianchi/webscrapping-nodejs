@@ -212,7 +212,7 @@ module.exports = async function censecPortal() {
     return obj;
 
   } catch (error) {
-    console.log('Portal Arpenp =>', error);
+    console.log('Portal Censec =>', error);
     const message = {
       status: 500,
       error: error.message

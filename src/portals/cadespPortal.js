@@ -61,7 +61,7 @@ module.exports = async function cadespPortal() {
     return obj;
 
   } catch (error) {
-    console.log('Portal Arpenp =>', error);
+    console.log('Portal Cadesp =>', error);
     const message = {
       status: 500,
       error: error.message

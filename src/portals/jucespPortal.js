@@ -38,7 +38,7 @@ module.exports = async function jucespPortal() {
     return obj;
 
   } catch (error) {
-    console.log('Portal Arpenp =>', error);
+    console.log('Portal Jucesp =>', error);
     const message = {
       status: 500,
       error: error.message
@@ -50,7 +50,7 @@ module.exports = async function jucespPortal() {
   }
 };
 
-Object.prototype.getData = async function(page) {
+Object.prototype.getData = async function() {
   const that = this;
 
   return new Promise(async function(resolve, reject) {

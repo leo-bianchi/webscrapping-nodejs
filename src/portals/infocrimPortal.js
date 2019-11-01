@@ -63,7 +63,7 @@ module.exports = async function infocrimPortal() {
     return obj;
 
   } catch (error) {
-    console.log('Portal Arpenp =>', error);
+    console.log('Portal Infocrim =>', error);
     const message = {
       status: 500,
       error: error.message
