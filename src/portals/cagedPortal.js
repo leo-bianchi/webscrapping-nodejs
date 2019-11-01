@@ -56,11 +56,11 @@ module.exports = async function cagedPortal() {
     return obj;
 
   } catch (error) {
-    console.log('Portal Caged =>', error);
     const message = {
       status: 500,
+      portal: 'Caged',
       error: error.message
-    }
+    };
     if (typeof page !== 'undefined') {
       page.close();
     }

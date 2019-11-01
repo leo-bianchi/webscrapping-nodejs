@@ -56,11 +56,11 @@ module.exports = async function arpenpPortal() {
     return obj;
 
   }  catch (error) {
-    console.log('Portal Arpenp =>', error);
     const message = {
       status: 500,
+      portal: 'Arpenp',
       error: error.message
-    }
+    };
     if (typeof page !== 'undefined') {
       page.close();
     }

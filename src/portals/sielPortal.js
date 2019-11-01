@@ -47,11 +47,11 @@ module.exports = async function sielPortal() {
     return obj;
 
   } catch (error) {
-    console.log('Portal Siel =>', error);
     const message = {
       status: 500,
+      portal: 'Siel',
       error: error.message
-    }
+    };
     if (typeof page !== 'undefined') {
       page.close();
     }

@@ -63,11 +63,11 @@ module.exports = async function infocrimPortal() {
     return obj;
 
   } catch (error) {
-    console.log('Portal Infocrim =>', error);
     const message = {
       status: 500,
+      portal: 'Infocrim',
       error: error.message
-    }
+    };
     if (typeof page !== 'undefined') {
       page.close();
     }

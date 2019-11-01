@@ -61,11 +61,11 @@ module.exports = async function cadespPortal() {
     return obj;
 
   } catch (error) {
-    console.log('Portal Cadesp =>', error);
     const message = {
       status: 500,
+      portal: 'Cadesp',
       error: error.message
-    }
+    };
     if (typeof page !== 'undefined') {
       page.close();
     }

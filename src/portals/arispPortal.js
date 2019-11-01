@@ -79,11 +79,11 @@ module.exports = async function arispPortal() {
     return await pdf;
 
   } catch (error) {
-    console.log('Portal Arisp =>', error);
     const message = {
       status: 500,
+      portal: 'Arisp',
       error: error.message
-    }
+    };
     if (typeof page !== 'undefined') {
       page.close();
     }

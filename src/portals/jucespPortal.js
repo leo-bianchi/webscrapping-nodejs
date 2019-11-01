@@ -38,11 +38,11 @@ module.exports = async function jucespPortal() {
     return obj;
 
   } catch (error) {
-    console.log('Portal Jucesp =>', error);
     const message = {
       status: 500,
+      portal: 'Jucesp',
       error: error.message
-    }
+    };
     if (typeof page !== 'undefined') {
       page.close();
     }

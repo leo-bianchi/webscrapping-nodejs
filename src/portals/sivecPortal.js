@@ -1,74 +1,70 @@
-/*jshint esversion: 9, strict: true, node: true */
+const select = require('puppeteer-select');
+const parse = require('../libs/parseObject.js');
+const chrome = require('../libs/getChrome.js');
 
-(function () {
-  'use strict';
+/**
+ * @constant
+ * @default
+ * @type {string}
+ */
+const sivec = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/sivec/pagina3-pesquisa-rg.html';
 
-  const select = require('puppeteer-select');
-  const parse = require('../libs/parseObject.js');
-  const chrome = require('../libs/getChrome.js');
+/**
+ * @async
+ * @module sivecPortal
+ * @returns {Object}
+ */
+module.exports = async function sivecPortal(rg) {
+  if (rg) {
+    try {
+      let input = rg;
 
-  /**
-   * @constant
-   * @default
-   * @type {string}
-   */
-  const sivec = 'http://ec2-18-231-116-58.sa-east-1.compute.amazonaws.com/sivec/pagina3-pesquisa-rg.html';
+      const instances = await chrome.chromeInstance(sivec);
 
-  /**
-   * @async
-   * @module sivecPortal
-   * @returns {Object}
-   */
-  module.exports = async function sivecPortal(rg) {
-    if (rg) {
-      try {
-        let input = rg;
+      const page = instances[0];
 
-        const instances = await chrome.chromeInstance(sivec);
+      await page.waitForSelector('#idValorPesq');
 
-        const page = instances[0];
+      await page.$eval('#idValorPesq', (el, _input) => el.value = _input, input);
 
-        await page.waitForSelector('#idValorPesq');
+      await page.click('#procurar');
 
-        await page.$eval('#idValorPesq', (el, _input) => el.value = _input, input);
+      await page.waitForNavigation({
+        waitUntil: 'load',
+      });
 
-        await page.click('#procurar');
+      // trocar por input do usuário
+      const a = await select(page)
+        .getElement('a:contains(' + input + ')');
 
-        await page.waitForNavigation({
-          waitUntil: 'load',
-        });
-
-        // trocar por input do usuário
-        const a = await select(page)
-          .getElement('a:contains(' + input + ')');
-
-        if (a) {
-          await a.click();
-        } else {
-          throw new Error('Link not found');
-        }
-
-        await page.waitForNavigation({
-          waitUntil: 'networkidle0',
-        });
-
-        const data = await chrome.evaluateData(page, 'table tr td span');
-
-        const obj = await parse.toObject(data);
-
-        await page.close();
-
-        return obj || null;
-
-      } catch (error) {
-        console.log('Portal Sivec =>', error);
-        if (typeof page !== 'undefined') {
-          page.close();
-        }
+      if (a) {
+        await a.click();
+      } else {
+        throw new Error('Link not found');
       }
-    } else {
-      return null;
-    }
-  };
 
-}());
+      await page.waitForNavigation({
+        waitUntil: 'networkidle0',
+      });
+
+      const data = await chrome.evaluateData(page, 'table tr td span');
+
+      const obj = await parse.toObject(data);
+
+      await page.close();
+
+      return obj;
+
+    } catch (error) {
+      const message = {
+        status: 500,
+        portal: 'Sivec',
+        error: error.message
+      };
+      if (typeof page !== 'undefined') {
+        page.close();
+      }
+      return message;
+    }
+  }
+};
