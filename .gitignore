@@ -88,5 +88,7 @@ typings/
 .dynamodb/
 
 # Nodeenv
-
 env/
+
+# Jshint
+.jshintrc
