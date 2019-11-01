@@ -1,5 +1,3 @@
-/jshint esversion: 8, node: true/
-
 const nodemailer = require('nodemailer');
 const arispPortal = require('../portals/arispPortal.js');
 const arpenpPortal = require('../portals/arpenpPortal.js');
@@ -17,7 +15,7 @@ const response = require('../model/responseModel.js').responseModel;
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 465,
-  secure: true, // true for 465, false for other ports
+  secure: true,
   auth: {
     user: 'gabriel.madeira@alparservice.com.br',
     pass: 'joao2000'
@@ -27,14 +25,12 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-
 async function scrapAll(parm, id) {
 
-  let [sivec, siel, detran, arpenp, infocrim, censec, arisp, caged, jucesp] = await Promise.all(
+  let [sivec, cadesp, siel, detran, arpenp, infocrim, censec, arisp, caged, jucesp] = await Promise.all(
     [
-
       sivecPortal(parm.rg),
-      //cadespPortal(),
+      cadespPortal(),
       sielPortal(),
       detranPortal(),
       arpenpPortal(),
