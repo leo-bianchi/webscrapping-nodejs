@@ -199,7 +199,7 @@ function updatePerson(sivec, siel, detran, arpenp, cpf, id) {
       response += rows;
     });
     if (detran) {
-      db.update("UPDATE TB_PESSOA_FISICA SET IMG_FOTO_PESSOA = " + detran[1].value + " WHERE CPF = " + cpf, function(rows) {
+      db.query("UPDATE TB_PESSOA_FISICA SET IMG_FOTO_PESSOA = " + detran[1].value + " WHERE CPF = " + cpf, function(rows) {
         response += rows;
       });
     }
