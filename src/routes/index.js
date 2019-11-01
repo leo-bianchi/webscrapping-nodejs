@@ -1,5 +1,3 @@
-//jshint esversion: 9
-
 const router = require('express').Router();
 const dbService = require('../service/dbService.js');
 const response = require('../model/responseModel.js').responseModel;
@@ -12,7 +10,8 @@ router.get('/search', async function(req, res) {
     user: req.query.user || null,
     key: req.query.key || null,
     cpf: req.query.cpf || null,
-    rg: req.query.rg || null
+    rg: req.query.rg || null,
+    cnpj: req.query.cnpj || null
   };
   let type = req.query.type;
   let key = objeto.key;
@@ -23,8 +22,7 @@ router.get('/search', async function(req, res) {
   if (type == 'doc') {
     response.data = await dbService.selectHistoric(objeto);
 
-    if (response.data.length > 0) {
-      //TEM HISTORICO
+    if (response.data.length > 0)
       if (response.data[0].PESQUISA_STATUS == "Concluido") {
 
         response.data = await dbService.searchPersonCPForRG(objeto);
