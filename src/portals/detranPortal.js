@@ -76,6 +76,10 @@ module.exports = async function detranPortal() {
     let data = await chrome
       .evaluateData(newPage, 'table.comBordaLeftBottom');
 
+    const url = await newPage.evaluate(() => document.querySelector('img[id^="form:imgFoto"]').src);
+
+    const image = await chrome.getImage(url);
+
     await page.close();
 
     await newPage.close();
@@ -89,14 +93,14 @@ module.exports = async function detranPortal() {
 
     const obj = parse.matrixToObject(array);
 
-    return [obj, await linhaDeVida, await baseEstadual];
+    return [obj, image, await linhaDeVida, await baseEstadual];
 
   } catch (error) {
-    console.log('Portal Detran =>', error);
     const message = {
       status: 500,
+      portal: 'Detran',
       error: error.message
-    }
+    };
     if (typeof page !== 'undefined') {
       page.close();
     }
