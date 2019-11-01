@@ -1,5 +1,5 @@
-//jshint esversion: 9
 const request_client = require('request-promise-native');
+const request = require('request');
 
 const path = require('path');
 const fs = require('fs');
@@ -116,8 +116,21 @@ async function getPdf(_context, _action) {
   });
 }
 
+async function getImage(uri) {
+  return new Promise(async function(resolve) {
+    request.get(uri, function(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        data = "data:" + response.headers["content-type"] + ";base64," + Buffer.from(body).toString('base64');
+        resolve(data);
+      }
+    });
+  });
+}
+
+
 module.exports = {
   chromeInstance,
   evaluateData,
   getPdf,
+  getImage,
 };
